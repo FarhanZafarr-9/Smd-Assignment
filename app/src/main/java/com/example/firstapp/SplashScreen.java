@@ -26,7 +26,7 @@ public class SplashScreen extends AppCompatActivity {
 
         btnGetStarted = findViewById(R.id.get_started_button);
         btnGetStarted.setOnClickListener((v)->{
-            Intent i = new Intent(SplashScreen.this, MainActivity.class);
+            Intent i = new Intent(SplashScreen.this, HomeActivity.class);
             startActivity(i);
             finish();
         });

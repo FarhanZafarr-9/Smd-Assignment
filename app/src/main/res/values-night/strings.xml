@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">First App</string>
+    <string name="splash_text">Management of a project will be easier if it is done well</string>
+    <string name="get_started">Get Started</string>
+    <string name="splash_logo_content_description">Splash Screen main entrance logo as png</string>
+    <string name="main_sub">Are you ready to get back to work?</string>
+    <string name="workspace_title">Workspace</string>
+    <string name="workspace_name">Sports App</string>
+    <string name="workspace_sub">"Created: "</string>
+    <string name="workspace_creation_date">20 May 2026</string>
+    <string name="todo">TODO</string>
+    <string name="new_project">New Project</string>
+    <string name="upcoming_projects">Upcoming</string>
+    <string name="user_salutation">Hi, Farhan</string>
+    <string name="project_type">User Interface</string>
+    <string name="project_title">Service Page Website</string>
+    <string name="project_description">Make a page display about services for websites company with blue and red colors</string>
+    <string name="tasks_count">1/2</string>
+    <string name="project_action">Invite</string>
+    <string name="attachment_icon">Attachment icon</string>
+    <string name="num_attachments">4 Attachment</string>
+    <string name="num_comments">10 Comment</string>
+    <string name="comment_icon">Comment icon</string>
+    <string name="project_screen_title">Create Service Page Website</string>
+    <string name="tasks">Tasks</string>
+    <string name="todays_tasks">Today\'s Tasks</string>
+    <string name="add_task">Add Task</string>
+    <string name="project_task1">Create a Design guideline for the brand</string>
+    <string name="label_project_name">Project Name</string>
+</resources>

@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:layout_marginHorizontal="25dp"
+    android:layout_marginTop="50dp"
+    android:background="#fcfcfc"
+    tools:context=".AddTaskScreen">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/add_tasks_title"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="#121212" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:text="@string/add_tasks_sub"
+        android:textColor="#8D6E63"
+        android:textSize="13sp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="@string/label_task1"
+        android:textSize="13sp"
+        android:textColor="#555555" />
+
+    <EditText
+        android:id="@+id/inputNewTask1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:autofillHints="@string/hint_new_task_1"
+        android:background="@drawable/bg_input_field"
+        android:hint="@string/hint_new_task_1"
+        android:inputType="text"
+        android:maxLength="500"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="14dp"
+        android:textColor="#121212"
+        android:textColorHint="#616161"
+        android:textSize="15sp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="@string/label_task2"
+        android:textSize="13sp"
+        android:textColor="#555555" />
+
+    <EditText
+        android:id="@+id/inputNewTask2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:autofillHints="@string/hint_new_task_2"
+        android:background="@drawable/bg_input_field"
+        android:hint="@string/hint_new_task_2"
+        android:inputType="text"
+        android:maxLength="500"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="14dp"
+        android:textColor="#121212"
+        android:textColorHint="#616161"
+        android:textSize="15sp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="@string/label_task3"
+        android:textSize="13sp"
+        android:textColor="#555555" />
+
+    <EditText
+        android:id="@+id/inputNewTask3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:autofillHints="@string/hint_new_task_3"
+        android:background="@drawable/bg_input_field"
+        android:hint="@string/hint_new_task_3"
+        android:inputType="text"
+        android:maxLength="500"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="14dp"
+        android:textColor="#121212"
+        android:textColorHint="#616161"
+        android:textSize="15sp" />
+
+    <Button
+        android:id="@+id/buttonAddTasks"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:backgroundTint="@color/black"
+        android:drawableEnd="@drawable/arrow_icon"
+        android:paddingHorizontal="14dp"
+        android:paddingVertical="14dp"
+        android:layout_gravity="center"
+        android:text="@string/add_tasks_confirm"
+        android:textColor="#FFFFFF" />
+
+</LinearLayout>

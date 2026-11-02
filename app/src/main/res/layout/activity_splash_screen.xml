@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".SplashScreen"
+    android:layout_marginTop="150dp">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:src="@drawable/splash_logo"
+        android:contentDescription="@string/splash_logo_content_description"
+        />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/splash_text"
+        android:layout_marginTop="72dp"
+        android:textSize="38sp"
+        android:gravity="center"
+        android:textColor="#121212"
+        android:layout_marginHorizontal="30dp"
+        />
+
+    <Button
+        android:id="@+id/get_started_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="60dp"
+        android:backgroundTint="@color/black"
+        android:paddingHorizontal="26dp"
+        android:paddingVertical="18dp"
+        android:text="@string/get_started"
+        android:textColor="@color/white" />
+</LinearLayout>

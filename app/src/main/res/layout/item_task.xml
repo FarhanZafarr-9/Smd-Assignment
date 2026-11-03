@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layout_marginBottom="10dp"
+    android:background="@drawable/bg_card_container"
+    android:padding="14dp"
+    android:elevation="1dp">
+
+    <!-- Top: CheckBox + Description + Actions -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="top">
+
+        <CheckBox
+            android:id="@+id/checkboxTaskDone"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:buttonTint="#5E35B1" />
+
+        <TextView
+            android:id="@+id/textTaskDescription"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:maxLines="2"
+            android:ellipsize="end"
+            android:text="Task description details that can span up to two lines."
+            android:textColor="#1A1A1A"
+            android:textSize="14sp"
+            android:lineSpacingExtra="2dp" />
+
+        <!-- Edit & Delete Buttons -->
+        <ImageView
+            android:id="@+id/buttonEditTask"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/arrow_icon"
+            android:rotation="180"
+            android:contentDescription="Edit task"
+            android:padding="3dp"
+            android:alpha="0.4"
+            android:background="?attr/selectableItemBackgroundBorderless" />
+
+        <ImageView
+            android:id="@+id/buttonDeleteTask"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginStart="4dp"
+            android:src="@drawable/ic_close"
+            android:contentDescription="Delete task"
+            android:padding="4dp"
+            android:alpha="0.5"
+            android:background="?attr/selectableItemBackgroundBorderless" />
+    </LinearLayout>
+
+    <!-- Meta Labels Row: Status, Priority, Due Date, Overdue -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="36dp"
+        android:gravity="center_vertical">
+
+        <!-- Status Label -->
+        <TextView
+            android:id="@+id/textTaskStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_rounded_pill"
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="2dp"
+            android:text="To do"
+            android:textColor="#5E35B1"
+            android:textSize="10sp"
+            android:textStyle="bold" />
+
+        <!-- Priority Label -->
+        <TextView
+            android:id="@+id/textTaskPriority"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:background="@drawable/bg_rounded_pill"
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="2dp"
+            android:text="Normal"
+            android:textColor="#333333"
+            android:textSize="10sp"
+            android:textStyle="bold" />
+
+        <!-- Due Date -->
+        <TextView
+            android:id="@+id/textTaskDueDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="Nov 05, 2026"
+            android:textColor="#777777"
+            android:textSize="11sp" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+
+        <!-- Overdue Pill -->
+        <TextView
+            android:id="@+id/textTaskOverdueBadge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#FFEBEE"
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="2dp"
+            android:text="OVERDUE"
+            android:textColor="#C62828"
+            android:textSize="10sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.05"
+            android:visibility="gone" />
+    </LinearLayout>
+
+</LinearLayout>

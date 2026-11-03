@@ -5,11 +5,247 @@
     android:orientation="vertical"
     android:background="#F8F9FA">
 
-    <TextView
-        android:id="@+id/textTasksPlaceholder"
+    <!-- Search Bar & Add Button -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="20dp"
-        android:text="Tasks Fragment"
-        android:textSize="16sp" />
+        android:orientation="vertical"
+        android:background="#FFFFFF"
+        android:paddingHorizontal="16dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="8dp"
+        android:elevation="1dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:orientation="horizontal"
+            android:background="@drawable/bg_input_field"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="10dp">
+
+            <ImageView
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:src="@drawable/ic_search"
+                android:contentDescription="Search tasks"
+                android:alpha="0.6" />
+
+            <EditText
+                android:id="@+id/editSearchTasks"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@null"
+                android:hint="Search task description..."
+                android:textSize="13sp"
+                android:textColor="#121212"
+                android:textColorHint="#999999"
+                android:paddingHorizontal="8dp"
+                android:singleLine="true" />
+
+            <ImageView
+                android:id="@+id/buttonClearTaskSearch"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:src="@drawable/ic_close"
+                android:contentDescription="Clear"
+                android:visibility="gone"
+                android:alpha="0.5" />
+        </LinearLayout>
+
+        <!-- Filters Row 1: Status & Priority -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="8dp">
+
+            <Spinner
+                android:id="@+id/spinnerFilterStatus"
+                android:layout_width="0dp"
+                android:layout_height="36dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_input_field"
+                android:layout_marginEnd="4dp" />
+
+            <Spinner
+                android:id="@+id/spinnerFilterPriority"
+                android:layout_width="0dp"
+                android:layout_height="36dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_input_field"
+                android:layout_marginStart="4dp" />
+        </LinearLayout>
+
+        <!-- Filters Row 2: Date & Sort -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="6dp">
+
+            <Spinner
+                android:id="@+id/spinnerFilterDate"
+                android:layout_width="0dp"
+                android:layout_height="36dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_input_field"
+                android:layout_marginEnd="4dp" />
+
+            <Spinner
+                android:id="@+id/spinnerFilterSort"
+                android:layout_width="0dp"
+                android:layout_height="36dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_input_field"
+                android:layout_marginStart="4dp" />
+        </LinearLayout>
+
+        <!-- Summary & Reset Row -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="8dp"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/textTaskShowingCount"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Showing 12 of 12 tasks"
+                android:textColor="#666666"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/buttonResetFilters"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Reset filters"
+                android:textColor="#5E35B1"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:paddingHorizontal="6dp"
+                android:paddingVertical="4dp"
+                android:background="?attr/selectableItemBackground" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- Main Content Frame (List & Empty States) -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <ListView
+            android:id="@+id/listViewTasks"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingHorizontal="16dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="72dp"
+            android:clipToPadding="false"
+            android:divider="@null"
+            android:dividerHeight="0dp"
+            android:scrollbars="vertical" />
+
+        <!-- Empty State 1: No tasks exist in project -->
+        <LinearLayout
+            android:id="@+id/layoutEmptyNoTasks"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="32dp"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="No tasks yet"
+                android:textColor="#1A1A1A"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Get started by creating your first task."
+                android:textColor="#888888"
+                android:textSize="13sp" />
+
+            <Button
+                android:id="@+id/buttonEmptyAddTask"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_marginTop="16dp"
+                android:text="+ Add Task"
+                android:backgroundTint="#5E35B1"
+                android:textColor="#FFFFFF"
+                android:textSize="13sp"
+                android:textAllCaps="false" />
+        </LinearLayout>
+
+        <!-- Empty State 2: Tasks exist but none match filters -->
+        <LinearLayout
+            android:id="@+id/layoutEmptyNoMatch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="32dp"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="No tasks match these filters"
+                android:textColor="#1A1A1A"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Try adjusting or clearing your filters."
+                android:textColor="#888888"
+                android:textSize="13sp" />
+
+            <Button
+                android:id="@+id/buttonEmptyResetFilters"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_marginTop="16dp"
+                android:text="Reset Filters"
+                android:backgroundTint="#F0F0F0"
+                android:textColor="#333333"
+                android:textSize="13sp"
+                android:textAllCaps="false" />
+        </LinearLayout>
+
+        <!-- Floating Add Task Button -->
+        <Button
+            android:id="@+id/buttonFloatingAddTask"
+            android:layout_width="wrap_content"
+            android:layout_height="46dp"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="16dp"
+            android:text="+ Add Task"
+            android:backgroundTint="#121212"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textAllCaps="false"
+            android:elevation="6dp" />
+
+    </FrameLayout>
+
 </LinearLayout>

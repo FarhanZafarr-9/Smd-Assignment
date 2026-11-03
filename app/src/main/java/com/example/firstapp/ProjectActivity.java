@@ -151,13 +151,17 @@ public class ProjectActivity extends AppCompatActivity implements ProjectHostCal
     @Override
     public void selectTasksWithStatusFilter(TaskStatus status) {
         selectTab(1); // Select Tasks tab
-        // TasksFragment will apply this filter
+        if (pagerAdapter != null && pagerAdapter.getTasksFragment() != null) {
+            pagerAdapter.getTasksFragment().applyStatusFilter(status);
+        }
     }
 
     @Override
     public void selectTasksWithOverdueFilter() {
         selectTab(1); // Select Tasks tab
-        // TasksFragment will apply this filter
+        if (pagerAdapter != null && pagerAdapter.getTasksFragment() != null) {
+            pagerAdapter.getTasksFragment().applyOverdueFilter();
+        }
     }
 
     @Override

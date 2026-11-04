@@ -4,9 +4,8 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:layout_marginBottom="10dp"
-    android:background="@drawable/bg_card_container"
-    android:padding="14dp"
-    android:elevation="1dp">
+    android:background="@drawable/bg_card"
+    android:padding="14dp">
 
     <!-- Top: CheckBox + Description + Actions -->
     <LinearLayout
@@ -19,7 +18,7 @@
             android:id="@+id/checkboxTaskDone"
             android:layout_width="28dp"
             android:layout_height="28dp"
-            android:buttonTint="#5E35B1" />
+            android:buttonTint="@color/tf_primary" />
 
         <TextView
             android:id="@+id/textTaskDescription"
@@ -31,7 +30,7 @@
             android:maxLines="2"
             android:ellipsize="end"
             android:text="Task description details that can span up to two lines."
-            android:textColor="#1A1A1A"
+            android:textColor="@color/tf_text_primary"
             android:textSize="14sp"
             android:lineSpacingExtra="2dp" />
 
@@ -77,7 +76,7 @@
             android:paddingHorizontal="8dp"
             android:paddingVertical="2dp"
             android:text="To do"
-            android:textColor="#5E35B1"
+            android:textColor="@color/tf_tag_text"
             android:textSize="10sp"
             android:textStyle="bold" />
 
@@ -91,7 +90,7 @@
             android:paddingHorizontal="8dp"
             android:paddingVertical="2dp"
             android:text="Normal"
-            android:textColor="#333333"
+            android:textColor="@color/tf_text_primary"
             android:textSize="10sp"
             android:textStyle="bold" />
 
@@ -102,7 +101,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:text="Nov 05, 2026"
-            android:textColor="#777777"
+            android:textColor="@color/tf_text_secondary"
             android:textSize="11sp" />
 
         <View
@@ -119,7 +118,7 @@
             android:paddingHorizontal="8dp"
             android:paddingVertical="2dp"
             android:text="OVERDUE"
-            android:textColor="#C62828"
+            android:textColor="@color/tf_overdue"
             android:textSize="10sp"
             android:textStyle="bold"
             android:letterSpacing="0.05"

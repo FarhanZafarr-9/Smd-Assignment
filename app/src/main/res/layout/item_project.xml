@@ -4,9 +4,8 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:layout_marginBottom="12dp"
-    android:background="@drawable/bg_card_container"
-    android:padding="16dp"
-    android:elevation="1dp">
+    android:background="@drawable/bg_card"
+    android:padding="16dp">
 
     <!-- Top Tag and Actions -->
     <LinearLayout
@@ -19,11 +18,11 @@
             android:id="@+id/projectTag"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/bg_rounded_pill"
+            android:background="@drawable/bg_tag"
             android:paddingHorizontal="12dp"
             android:paddingVertical="4dp"
             android:text="MOBILE-APP"
-            android:textColor="#5E35B1"
+            android:textColor="@color/tf_tag_text"
             android:textSize="11sp"
             android:textStyle="bold"
             android:letterSpacing="0.05" />
@@ -48,7 +47,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="Project Title"
-        android:textColor="#1A1A1A"
+        android:textColor="@color/tf_text_primary"
         android:textSize="18sp"
         android:textStyle="bold" />
 
@@ -61,7 +60,7 @@
         android:ellipsize="end"
         android:maxLines="2"
         android:text="This is the project description which is truncated after two lines if it is very long."
-        android:textColor="#666666"
+        android:textColor="@color/tf_text_secondary"
         android:textSize="13sp"
         android:lineSpacingExtra="2dp" />
 
@@ -78,7 +77,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="4/12 tasks"
-            android:textColor="#333333"
+            android:textColor="@color/tf_text_primary"
             android:textSize="12sp"
             android:textStyle="bold" />
 
@@ -92,7 +91,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="33%"
-            android:textColor="#5E35B1"
+            android:textColor="@color/tf_primary"
             android:textSize="12sp"
             android:textStyle="bold" />
     </LinearLayout>
@@ -105,8 +104,8 @@
         android:layout_marginTop="6dp"
         android:max="100"
         android:progress="33"
-        android:progressTint="#5E35B1"
-        android:progressBackgroundTint="#E0E0E0" />
+        android:progressTint="@color/tf_primary"
+        android:progressBackgroundTint="@color/tf_stroke" />
 
     <!-- Divider -->
     <View
@@ -114,7 +113,7 @@
         android:layout_height="1dp"
         android:layout_marginTop="12dp"
         android:layout_marginBottom="10dp"
-        android:background="#F0F0F0" />
+        android:background="@color/tf_divider" />
 
     <!-- Footer Meta: Attachments & Comments -->
     <LinearLayout
@@ -143,7 +142,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
                 android:text="3"
-                android:textColor="#666666"
+                android:textColor="@color/tf_text_secondary"
                 android:textSize="12sp" />
         </LinearLayout>
 
@@ -168,7 +167,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
                 android:text="3"
-                android:textColor="#666666"
+                android:textColor="@color/tf_text_secondary"
                 android:textSize="12sp" />
         </LinearLayout>
     </LinearLayout>

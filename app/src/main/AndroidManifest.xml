@@ -31,26 +31,6 @@
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
 
-        <activity
-            android:name=".MainActivity"
-            android:exported="false"
-            android:windowSoftInputMode="adjustResize" />
-
-        <activity
-            android:name=".ProductScreen"
-            android:exported="false"
-            android:windowSoftInputMode="adjustResize" />
-
-        <activity
-            android:name=".add_project"
-            android:exported="false"
-            android:windowSoftInputMode="adjustResize" />
-
-        <activity
-            android:name=".AddTaskScreen"
-            android:exported="false"
-            android:windowSoftInputMode="adjustResize" />
-
     </application>
 
 </manifest>

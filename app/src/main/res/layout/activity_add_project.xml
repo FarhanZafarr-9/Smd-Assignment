@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:layout_marginHorizontal="25dp"
+    android:layout_marginTop="50dp"
+    android:background="#fcfcfc"
+    tools:context=".add_project">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/label_project_name"
+        android:textSize="13sp"
+        android:textColor="#555555" />
+
+    <EditText
+        android:id="@+id/inputProjectName"
+        android:autofillHints="@string/hint_project_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:background="@drawable/bg_input_field"
+        android:hint="@string/hint_project_name"
+        android:inputType="text"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="14dp"
+        android:textColor="#121212"
+        android:textColorHint="#616161"
+        android:textSize="15sp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="@string/label_project_tag"
+        android:textSize="13sp"
+        android:textColor="#555555" />
+
+    <EditText
+        android:id="@+id/inputProjectTag"
+        android:autofillHints="@string/hint_project_tag"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:background="@drawable/bg_input_field"
+        android:hint="@string/hint_project_tag"
+        android:inputType="text"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="14dp"
+        android:textColor="#121212"
+        android:textColorHint="#616161"
+        android:textSize="15sp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="@string/label_attachment"
+        android:textSize="13sp"
+        android:textColor="#555555" />
+
+    <EditText
+        android:id="@+id/inputAttachment"
+        android:autofillHints="@string/hint_attachment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:background="@drawable/bg_input_field"
+        android:hint="@string/hint_attachment"
+        android:inputType="text"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="14dp"
+        android:textColor="#121212"
+        android:textColorHint="#616161"
+        android:textSize="15sp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="@string/label_project_description"
+        android:textSize="13sp"
+        android:textColor="#555555" />
+
+    <EditText
+        android:id="@+id/inputProjectDescription"
+        android:autofillHints="@string/hint_project_description"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:layout_marginTop="6dp"
+        android:background="@drawable/bg_input_field"
+        android:gravity="top"
+        android:hint="@string/hint_project_description"
+        android:inputType="textMultiLine"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="14dp"
+        android:textColor="#121212"
+        android:textColorHint="#616161"
+        android:maxLength="500"
+        android:textSize="15sp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="@string/label_task1"
+        android:textSize="13sp"
+        android:textColor="#555555" />
+
+    <EditText
+        android:id="@+id/inputTask1"
+        android:autofillHints="@string/project_task1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:background="@drawable/bg_input_field"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="14dp"
+        android:text="@string/project_task1"
+        android:textColor="#121212"
+        android:textColorHint="#8E8E93"
+        android:inputType="text"
+        android:textSize="15sp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="@string/label_task2"
+        android:textSize="13sp"
+        android:textColor="#555555" />
+
+    <EditText
+        android:id="@+id/inputTask2"
+        android:autofillHints="@string/project_task2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:background="@drawable/bg_input_field"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="14dp"
+        android:text="@string/project_task2"
+        android:textColor="#121212"
+        android:textColorHint="#8E8E93"
+        android:inputType="text"
+        android:textSize="15sp" />
+
+    <Button
+        android:id="@+id/buttonAddProject"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:text="@string/add_project"
+        android:backgroundTint="@color/black"
+        android:textColor="#FFFFFF"
+        android:paddingVertical="14dp"
+        android:paddingHorizontal="64dp"
+        android:drawableEnd="@drawable/arrow_icon"
+        android:layout_gravity="center"
+        />
+
+</LinearLayout>

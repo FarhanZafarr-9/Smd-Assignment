@@ -103,22 +103,26 @@ public class TasksFragment extends Fragment implements TaskAdapter.TaskActionLis
 
         // Status
         String[] statusOptions = {"All statuses", "To do", "In progress", "Done"};
-        ArrayAdapter<String> statusAdapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_dropdown_item, statusOptions);
+        ArrayAdapter<String> statusAdapter = new ArrayAdapter<>(requireContext(), R.layout.item_spinner_selected, statusOptions);
+        statusAdapter.setDropDownViewResource(R.layout.item_spinner_dropdown);
         spinnerFilterStatus.setAdapter(statusAdapter);
 
         // Priority
         String[] priorityOptions = {"All priorities", "High", "Normal", "Low"};
-        ArrayAdapter<String> priorityAdapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_dropdown_item, priorityOptions);
+        ArrayAdapter<String> priorityAdapter = new ArrayAdapter<>(requireContext(), R.layout.item_spinner_selected, priorityOptions);
+        priorityAdapter.setDropDownViewResource(R.layout.item_spinner_dropdown);
         spinnerFilterPriority.setAdapter(priorityAdapter);
 
         // Date
         String[] dateOptions = {"All dates", "Today", "Overdue", "No due date"};
-        ArrayAdapter<String> dateAdapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_dropdown_item, dateOptions);
+        ArrayAdapter<String> dateAdapter = new ArrayAdapter<>(requireContext(), R.layout.item_spinner_selected, dateOptions);
+        dateAdapter.setDropDownViewResource(R.layout.item_spinner_dropdown);
         spinnerFilterDate.setAdapter(dateAdapter);
 
         // Sort (default: Due date ascending)
         String[] sortOptions = {"Due date ascending", "Due date descending", "Priority (high to low)", "Created (newest)"};
-        ArrayAdapter<String> sortAdapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_dropdown_item, sortOptions);
+        ArrayAdapter<String> sortAdapter = new ArrayAdapter<>(requireContext(), R.layout.item_spinner_selected, sortOptions);
+        sortAdapter.setDropDownViewResource(R.layout.item_spinner_dropdown);
         spinnerFilterSort.setAdapter(sortAdapter);
 
         spinnerFilterStatus.setSelection(currentStatusIndex);

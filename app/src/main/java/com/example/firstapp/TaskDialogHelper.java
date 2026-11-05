@@ -12,7 +12,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 
@@ -38,17 +37,22 @@ public class TaskDialogHelper {
         TextView textSelectedDueDate = dialogView.findViewById(R.id.textSelectedDueDate);
         Button buttonPickDueDate = dialogView.findViewById(R.id.buttonPickDueDate);
         ImageView buttonClearDueDate = dialogView.findViewById(R.id.buttonClearDueDate);
+        Button buttonTaskCancel = dialogView.findViewById(R.id.buttonTaskCancel);
+        Button buttonTaskSave = dialogView.findViewById(R.id.buttonTaskSave);
 
         boolean isNew = (existingTask == null);
         textTitle.setText(isNew ? "Add Task" : "Edit Task");
+        buttonTaskSave.setText(isNew ? "Add" : "Save");
 
         // Setup Spinners
         String[] priorities = {"Normal", "High", "Low"};
-        ArrayAdapter<String> priorityAdapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_dropdown_item, priorities);
+        ArrayAdapter<String> priorityAdapter = new ArrayAdapter<>(context, R.layout.item_spinner_selected, priorities);
+        priorityAdapter.setDropDownViewResource(R.layout.item_spinner_dropdown);
         spinnerPriority.setAdapter(priorityAdapter);
 
         String[] statuses = {"To do", "In progress", "Done"};
-        ArrayAdapter<String> statusAdapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_dropdown_item, statuses);
+        ArrayAdapter<String> statusAdapter = new ArrayAdapter<>(context, R.layout.item_spinner_selected, statuses);
+        statusAdapter.setDropDownViewResource(R.layout.item_spinner_dropdown);
         spinnerStatus.setAdapter(statusAdapter);
 
         final Long[] selectedDueDate = new Long[1];
@@ -138,41 +142,42 @@ public class TaskDialogHelper {
 
         AlertDialog dialog = new AlertDialog.Builder(context)
                 .setView(dialogView)
-                .setPositiveButton(isNew ? "Add" : "Save", null)
-                .setNegativeButton("Cancel", (d, which) -> d.dismiss())
                 .create();
 
-        dialog.setOnShowListener(d -> {
-            Button positiveBtn = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-            positiveBtn.setOnClickListener(v -> {
-                String desc = editDescription.getText().toString().trim();
-                if (desc.isEmpty() || desc.length() > 500) {
-                    editDescription.setError("Description required (1–500 chars)");
-                    return;
-                }
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        }
 
-                String prioStr = (String) spinnerPriority.getSelectedItem();
-                TaskPriority priority = TaskPriority.fromDisplayName(prioStr);
+        buttonTaskCancel.setOnClickListener(v -> dialog.dismiss());
 
-                String statusStr = (String) spinnerStatus.getSelectedItem();
-                TaskStatus status = TaskStatus.fromDisplayName(statusStr);
+        buttonTaskSave.setOnClickListener(v -> {
+            String desc = editDescription.getText().toString().trim();
+            if (desc.isEmpty() || desc.length() > 500) {
+                editDescription.setError("Description required (1–500 chars)");
+                return;
+            }
 
-                Task taskToSave;
-                if (isNew) {
-                    taskToSave = new Task(desc, status, priority, selectedDueDate[0]);
-                } else {
-                    taskToSave = existingTask;
-                    taskToSave.setDescription(desc);
-                    taskToSave.setPriority(priority);
-                    taskToSave.setStatus(status);
-                    taskToSave.setDueDate(selectedDueDate[0]);
-                }
+            String prioStr = (String) spinnerPriority.getSelectedItem();
+            TaskPriority priority = TaskPriority.fromDisplayName(prioStr);
 
-                if (listener != null) {
-                    listener.onTaskSaved(taskToSave, isNew);
-                }
-                dialog.dismiss();
-            });
+            String statusStr = (String) spinnerStatus.getSelectedItem();
+            TaskStatus status = TaskStatus.fromDisplayName(statusStr);
+
+            Task taskToSave;
+            if (isNew) {
+                taskToSave = new Task(desc, status, priority, selectedDueDate[0]);
+            } else {
+                taskToSave = existingTask;
+                taskToSave.setDescription(desc);
+                taskToSave.setPriority(priority);
+                taskToSave.setStatus(status);
+                taskToSave.setDueDate(selectedDueDate[0]);
+            }
+
+            if (listener != null) {
+                listener.onTaskSaved(taskToSave, isNew);
+            }
+            dialog.dismiss();
         });
 
         dialog.show();

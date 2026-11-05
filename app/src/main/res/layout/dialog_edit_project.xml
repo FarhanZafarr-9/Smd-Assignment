@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="20dp">
+    android:background="@drawable/bg_dialog_rounded"
+    android:padding="22dp">
 
     <TextView
         android:layout_width="match_parent"
@@ -11,7 +12,7 @@
         android:text="Edit Project"
         android:textSize="20sp"
         android:textStyle="bold"
-        android:textColor="#1A1A1A"
+        android:textColor="@color/tf_text_primary"
         android:layout_marginBottom="16dp" />
 
     <!-- Project Name -->
@@ -21,16 +22,18 @@
         android:text="Project Name *"
         android:textSize="12sp"
         android:textStyle="bold"
-        android:textColor="#555555" />
+        android:textColor="@color/tf_text_primary" />
 
     <EditText
         android:id="@+id/editEditProjectName"
         android:layout_width="match_parent"
         android:layout_height="44dp"
-        android:layout_marginTop="4dp"
-        android:layout_marginBottom="12dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginBottom="14dp"
         android:background="@drawable/bg_input_field"
         android:hint="Enter name (1–60 chars)"
+        android:textColorHint="@color/tf_text_secondary"
+        android:textColor="@color/tf_text_primary"
         android:maxLength="60"
         android:paddingHorizontal="12dp"
         android:singleLine="true"
@@ -43,16 +46,18 @@
         android:text="Project Tag *"
         android:textSize="12sp"
         android:textStyle="bold"
-        android:textColor="#555555" />
+        android:textColor="@color/tf_text_primary" />
 
     <EditText
         android:id="@+id/editEditProjectTag"
         android:layout_width="match_parent"
         android:layout_height="44dp"
-        android:layout_marginTop="4dp"
-        android:layout_marginBottom="12dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginBottom="14dp"
         android:background="@drawable/bg_input_field"
         android:hint="Enter tag (1–20 chars)"
+        android:textColorHint="@color/tf_text_secondary"
+        android:textColor="@color/tf_text_primary"
         android:maxLength="20"
         android:paddingHorizontal="12dp"
         android:singleLine="true"
@@ -65,19 +70,53 @@
         android:text="Description *"
         android:textSize="12sp"
         android:textStyle="bold"
-        android:textColor="#555555" />
+        android:textColor="@color/tf_text_primary" />
 
     <EditText
         android:id="@+id/editEditProjectDescription"
         android:layout_width="match_parent"
         android:layout_height="100dp"
-        android:layout_marginTop="4dp"
-        android:layout_marginBottom="12dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginBottom="14dp"
         android:background="@drawable/bg_input_field"
         android:gravity="top|start"
         android:hint="Enter description (1–500 chars)"
+        android:textColorHint="@color/tf_text_secondary"
+        android:textColor="@color/tf_text_primary"
         android:maxLength="500"
         android:padding="12dp"
         android:textSize="14sp" />
+
+    <!-- Dialog Action Buttons (Inside card body) -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="end"
+        android:layout_marginTop="20dp">
+
+        <Button
+            android:id="@+id/buttonEditProjectCancel"
+            android:layout_width="wrap_content"
+            android:layout_height="42dp"
+            android:text="Cancel"
+            android:textColor="@color/tf_text_secondary"
+            android:backgroundTint="@color/tf_bg_screen"
+            android:textAllCaps="false"
+            android:textStyle="bold"
+            android:paddingHorizontal="16dp" />
+
+        <Button
+            android:id="@+id/buttonEditProjectSave"
+            android:layout_width="wrap_content"
+            android:layout_height="42dp"
+            android:layout_marginStart="10dp"
+            android:text="Save"
+            android:textColor="@color/white"
+            android:backgroundTint="@color/tf_primary"
+            android:textAllCaps="false"
+            android:textStyle="bold"
+            android:paddingHorizontal="20dp" />
+    </LinearLayout>
 
 </LinearLayout>

@@ -1,6 +1,7 @@
 package com.example.firstapp;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -35,6 +36,30 @@ public class HomeActivity extends AppCompatActivity {
     private TextView textProjectsCount;
     private EditText editSearchProjects;
     private ImageView buttonClearSearch;
+
+    // For file picker in New Project dialog
+    private CatalogItem pendingDeviceItem;
+    private TextView activeTextSelectedAttachment;
+    private View activeButtonClearAttachment;
+
+    private final ActivityResultLauncher<String> filePickerLauncher = registerForActivityResult(
+            new ActivityResultContracts.GetContent(),
+            uri -> {
+                if (uri != null) {
+                    CatalogItem item = AttachmentPickerHelper.processPickedUri(this, uri);
+                    if (item != null) {
+                        pendingDeviceItem = item;
+                        if (activeTextSelectedAttachment != null) {
+                            activeTextSelectedAttachment.setText(item.getDisplayName() + " (" + item.getType().getDisplayName() + ")");
+                        }
+                        if (activeButtonClearAttachment != null) {
+                            activeButtonClearAttachment.setVisibility(View.VISIBLE);
+                        }
+                        Toast.makeText(this, "File attached: " + item.getDisplayName(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+    );
 
     private final ActivityResultLauncher<Intent> projectLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
@@ -119,80 +144,84 @@ public class HomeActivity extends AppCompatActivity {
         Button buttonSelectAttachment = dialogView.findViewById(R.id.buttonSelectAttachment);
         TextView textSelectedAttachment = dialogView.findViewById(R.id.textSelectedAttachment);
         ImageView buttonClearAttachment = dialogView.findViewById(R.id.buttonClearAttachment);
+        Button buttonCancel = dialogView.findViewById(R.id.buttonNewProjectCancel);
+        Button buttonAdd = dialogView.findViewById(R.id.buttonNewProjectAdd);
 
         final CatalogItem[] selectedItem = new CatalogItem[1];
+        pendingDeviceItem = null;
+        activeTextSelectedAttachment = textSelectedAttachment;
+        activeButtonClearAttachment = buttonClearAttachment;
 
         buttonSelectAttachment.setOnClickListener(v -> {
             List<CatalogItem> items = CatalogRepository.getAllItems();
-            String[] displayNames = new String[items.size()];
-            for (int i = 0; i < items.size(); i++) {
-                displayNames[i] = items.get(i).getDisplayName() + " (" + items.get(i).getType().getDisplayName() + ")";
-            }
-
-            new AlertDialog.Builder(this)
-                    .setTitle("Select Catalog Attachment")
-                    .setItems(displayNames, (dialog, which) -> {
-                        selectedItem[0] = items.get(which);
-                        textSelectedAttachment.setText(selectedItem[0].getDisplayName());
+            AttachmentPickerHelper.showPicker(
+                    this,
+                    items,
+                    () -> filePickerLauncher.launch("*/*"),
+                    item -> {
+                        selectedItem[0] = item;
+                        textSelectedAttachment.setText(item.getDisplayName() + " (" + item.getType().getDisplayName() + ")");
                         buttonClearAttachment.setVisibility(View.VISIBLE);
-                    })
-                    .setNegativeButton("Cancel", null)
-                    .show();
+                    }
+            );
         });
 
         buttonClearAttachment.setOnClickListener(v -> {
             selectedItem[0] = null;
+            pendingDeviceItem = null;
             textSelectedAttachment.setText("None selected");
             buttonClearAttachment.setVisibility(View.GONE);
         });
 
         AlertDialog dialog = new AlertDialog.Builder(this)
                 .setView(dialogView)
-                .setPositiveButton("Add", null) // Overridden to prevent auto-dismiss on validation failure
-                .setNegativeButton("Cancel", (d, which) -> d.dismiss())
                 .create();
 
-        dialog.setOnShowListener(d -> {
-            Button addButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-            addButton.setOnClickListener(v -> {
-                String name = editName.getText().toString().trim();
-                String tag = editTag.getText().toString().trim();
-                String description = editDescription.getText().toString().trim();
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        }
 
-                boolean valid = true;
+        buttonCancel.setOnClickListener(v -> dialog.dismiss());
 
-                if (name.isEmpty() || name.length() > 60) {
-                    editName.setError("Name is required (1–60 chars)");
-                    valid = false;
-                }
+        buttonAdd.setOnClickListener(v -> {
+            String name = editName.getText().toString().trim();
+            String tag = editTag.getText().toString().trim();
+            String description = editDescription.getText().toString().trim();
 
-                if (tag.isEmpty() || tag.length() > 20) {
-                    editTag.setError("Tag is required (1–20 chars)");
-                    valid = false;
-                }
+            boolean valid = true;
 
-                if (description.isEmpty() || description.length() > 500) {
-                    editDescription.setError("Description is required (1–500 chars)");
-                    valid = false;
-                }
+            if (name.isEmpty() || name.length() > 60) {
+                editName.setError("Name is required (1–60 chars)");
+                valid = false;
+            }
 
-                if (!valid) return;
+            if (tag.isEmpty() || tag.length() > 20) {
+                editTag.setError("Tag is required (1–20 chars)");
+                valid = false;
+            }
 
-                // Create project with 0/0 tasks, 0%, 0 comments
-                Project newProject = new Project(tag, name, description);
-                if (selectedItem[0] != null) {
-                    newProject.addAttachmentLink(new AttachmentLink(
-                            selectedItem[0].getId(),
-                            selectedItem[0].getDrawableResId()
-                    ));
-                }
+            if (description.isEmpty() || description.length() > 500) {
+                editDescription.setError("Description is required (1–500 chars)");
+                valid = false;
+            }
 
-                projectsList.add(newProject);
-                adapter.updateData(projectsList);
-                updateProjectsCount();
-                dialog.dismiss();
-                Toast.makeText(this, "Project created successfully", Toast.LENGTH_SHORT).show();
-            });
+            if (!valid) return;
+
+            // Create project with 0/0 tasks, 0%, 0 comments
+            Project newProject = new Project(tag, name, description);
+            CatalogItem itemToAttach = selectedItem[0] != null ? selectedItem[0] : pendingDeviceItem;
+            if (itemToAttach != null) {
+                newProject.addAttachmentLink(new AttachmentLink(
+                        itemToAttach.getId(),
+                        itemToAttach.getDrawableResId()
+                ));
+            }
+
+            projectsList.add(newProject);
+            adapter.updateData(projectsList);
+            updateProjectsCount();
+            dialog.dismiss();
+            Toast.makeText(this, "Project created successfully", Toast.LENGTH_SHORT).show();
         });
 
         dialog.show();

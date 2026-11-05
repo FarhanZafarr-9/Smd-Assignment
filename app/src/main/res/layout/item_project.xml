@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layout_marginBottom="12dp"
+    android:background="@drawable/bg_card_container"
+    android:padding="16dp"
+    android:elevation="1dp">
+
+    <!-- Top Tag and Actions -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/projectTag"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_rounded_pill"
+            android:paddingHorizontal="12dp"
+            android:paddingVertical="4dp"
+            android:text="MOBILE-APP"
+            android:textColor="#5E35B1"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.05" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+
+        <ImageView
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:src="@drawable/arrow_icon"
+            android:contentDescription="Open project"
+            android:alpha="0.4" />
+    </LinearLayout>
+
+    <!-- Project Name -->
+    <TextView
+        android:id="@+id/projectName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Project Title"
+        android:textColor="#1A1A1A"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <!-- Project Description (max 2 lines) -->
+    <TextView
+        android:id="@+id/projectDescription"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:text="This is the project description which is truncated after two lines if it is very long."
+        android:textColor="#666666"
+        android:textSize="13sp"
+        android:lineSpacingExtra="2dp" />
+
+    <!-- Progress Section -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="14dp"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/projectTaskFraction"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="4/12 tasks"
+            android:textColor="#333333"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+
+        <TextView
+            android:id="@+id/projectProgressPercentage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="33%"
+            android:textColor="#5E35B1"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/projectProgressBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="6dp"
+        android:layout_marginTop="6dp"
+        android:max="100"
+        android:progress="33"
+        android:progressTint="#5E35B1"
+        android:progressBackgroundTint="#E0E0E0" />
+
+    <!-- Divider -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="10dp"
+        android:background="#F0F0F0" />
+
+    <!-- Footer Meta: Attachments & Comments -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <!-- Attachments -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:layout_width="14dp"
+                android:layout_height="14dp"
+                android:src="@drawable/attachment_icon"
+                android:contentDescription="@string/attachment_icon"
+                android:alpha="0.7" />
+
+            <TextView
+                android:id="@+id/projectAttachmentCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:text="3"
+                android:textColor="#666666"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <!-- Comments -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginStart="20dp">
+
+            <ImageView
+                android:layout_width="14dp"
+                android:layout_height="14dp"
+                android:src="@drawable/comment_icon"
+                android:contentDescription="@string/comment_icon"
+                android:alpha="0.7" />
+
+            <TextView
+                android:id="@+id/projectCommentCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:text="3"
+                android:textColor="#666666"
+                android:textSize="12sp" />
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>

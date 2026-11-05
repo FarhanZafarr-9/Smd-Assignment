@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/bg_dialog_rounded"
+    android:padding="22dp">
+
+    <!-- Header -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Select Attachment"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="@color/tf_text_primary" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:text="Choose from catalog items or pick from phone storage"
+        android:textColor="@color/tf_text_secondary"
+        android:textSize="12sp" />
+
+    <!-- Pick from Phone Storage Button -->
+    <Button
+        android:id="@+id/buttonPickFromDevice"
+        android:layout_width="match_parent"
+        android:layout_height="42dp"
+        android:layout_marginTop="12dp"
+        android:text="+ Pick File from Phone Storage"
+        android:backgroundTint="@color/tf_bg_screen"
+        android:textColor="@color/tf_primary"
+        android:textStyle="bold"
+        android:textAllCaps="false"
+        android:textSize="13sp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/tf_stroke"
+        android:layout_marginVertical="12dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="CATALOG ITEMS"
+        android:textSize="11sp"
+        android:textColor="@color/tf_text_secondary"
+        android:textStyle="bold"
+        android:letterSpacing="0.08"
+        android:layout_marginBottom="6dp" />
+
+    <!-- ListView of Catalog Items -->
+    <ListView
+        android:id="@+id/listViewCatalogItems"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:divider="@color/tf_divider"
+        android:dividerHeight="1dp"
+        android:choiceMode="singleChoice" />
+
+    <!-- Action Buttons -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="end"
+        android:layout_marginTop="16dp">
+
+        <Button
+            android:id="@+id/buttonCatalogCancel"
+            android:layout_width="wrap_content"
+            android:layout_height="42dp"
+            android:text="Cancel"
+            android:textColor="@color/tf_text_secondary"
+            android:backgroundTint="@color/tf_bg_screen"
+            android:textAllCaps="false"
+            android:textStyle="bold"
+            android:paddingHorizontal="16dp" />
+
+        <Button
+            android:id="@+id/buttonCatalogAdd"
+            android:layout_width="wrap_content"
+            android:layout_height="42dp"
+            android:layout_marginStart="10dp"
+            android:text="Add"
+            android:textColor="@color/white"
+            android:backgroundTint="@color/tf_primary"
+            android:textAllCaps="false"
+            android:textStyle="bold"
+            android:enabled="false"
+            android:paddingHorizontal="20dp" />
+    </LinearLayout>
+
+</LinearLayout>

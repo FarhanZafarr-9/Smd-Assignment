@@ -1,6 +1,7 @@
 package com.example.firstapp;
 
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -14,6 +15,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -48,6 +51,24 @@ public class FilesFragment extends Fragment implements AttachmentAdapter.Attachm
 
     private String currentSearch = "";
     private ChipSelection currentChip = ChipSelection.ALL;
+
+    private final ActivityResultLauncher<String> filePickerLauncher = registerForActivityResult(
+            new ActivityResultContracts.GetContent(),
+            uri -> {
+                if (uri != null && isAdded()) {
+                    CatalogItem item = AttachmentPickerHelper.processPickedUri(requireContext(), uri);
+                    if (item != null) {
+                        ProjectHostCallback host = (ProjectHostCallback) getActivity();
+                        if (host != null && host.getProject() != null) {
+                            host.getProject().addAttachmentLink(new AttachmentLink(item.getId(), item.getDrawableResId()));
+                            host.onProjectUpdated();
+                            applyFilters();
+                            Toast.makeText(requireContext(), "File attached: " + item.getDisplayName(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }
+            }
+    );
 
     public static FilesFragment newInstance(String projectId) {
         FilesFragment fragment = new FilesFragment();
@@ -253,50 +274,17 @@ public class FilesFragment extends Fragment implements AttachmentAdapter.Attachm
             }
         }
 
-        if (unlinked.isEmpty()) {
-            Toast.makeText(requireContext(), "All catalog items have already been linked", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        String[] itemLabels = new String[unlinked.size()];
-        for (int i = 0; i < unlinked.size(); i++) {
-            CatalogItem ci = unlinked.get(i);
-            itemLabels[i] = ci.getDisplayName() + " (" + ci.getType().getDisplayName() + ")";
-        }
-
-        final int[] selectedIndex = {-1};
-
-        AlertDialog dialog = new AlertDialog.Builder(requireContext())
-                .setTitle("Add Attachment from Catalog")
-                .setSingleChoiceItems(itemLabels, -1, (d, which) -> {
-                    selectedIndex[0] = which;
-                    AlertDialog ad = (AlertDialog) d;
-                    Button addBtn = ad.getButton(AlertDialog.BUTTON_POSITIVE);
-                    if (addBtn != null) {
-                        addBtn.setEnabled(true);
-                    }
-                })
-                .setPositiveButton("Add", (d, which) -> {
-                    if (selectedIndex[0] >= 0 && selectedIndex[0] < unlinked.size()) {
-                        CatalogItem chosen = unlinked.get(selectedIndex[0]);
-                        project.addAttachmentLink(new AttachmentLink(chosen.getId(), chosen.getDrawableResId()));
-                        host.onProjectUpdated();
-                        applyFilters();
-                        Toast.makeText(requireContext(), "Attachment added", Toast.LENGTH_SHORT).show();
-                    }
-                })
-                .setNegativeButton("Cancel", null)
-                .create();
-
-        dialog.setOnShowListener(d -> {
-            Button addBtn = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-            if (addBtn != null) {
-                // Add stays disabled until an eligible item is selected
-                addBtn.setEnabled(false);
-            }
-        });
-
-        dialog.show();
+        AttachmentPickerHelper.showPicker(
+                requireContext(),
+                unlinked,
+                () -> filePickerLauncher.launch("*/*"),
+                chosen -> {
+                    project.addAttachmentLink(new AttachmentLink(chosen.getId(), chosen.getDrawableResId()));
+                    host.onProjectUpdated();
+                    applyFilters();
+                    Toast.makeText(requireContext(), "Attachment added", Toast.LENGTH_SHORT).show();
+                }
+        );
     }
 
     // AttachmentAdapter.AttachmentActionListener
@@ -310,6 +298,7 @@ public class FilesFragment extends Fragment implements AttachmentAdapter.Attachm
         ImageView imageView = previewView.findViewById(R.id.imagePreviewContent);
         View scrollView = previewView.findViewById(R.id.scrollTextPreview);
         TextView textContentView = previewView.findViewById(R.id.textPreviewContent);
+        Button buttonClose = previewView.findViewById(R.id.buttonPreviewClose);
 
         titleView.setText(item.getDisplayName());
         typeView.setText(item.getType().getDisplayName());
@@ -317,7 +306,13 @@ public class FilesFragment extends Fragment implements AttachmentAdapter.Attachm
         if (item.getType() == AttachmentType.IMAGE) {
             imageView.setVisibility(View.VISIBLE);
             scrollView.setVisibility(View.GONE);
-            if (item.getDrawableResId() != 0) {
+            if (item.getFileUri() != null) {
+                try {
+                    imageView.setImageURI(Uri.parse(item.getFileUri()));
+                } catch (Exception e) {
+                    imageView.setImageResource(R.drawable.ic_image_file);
+                }
+            } else if (item.getDrawableResId() != 0) {
                 imageView.setImageResource(item.getDrawableResId());
             } else {
                 imageView.setImageResource(R.drawable.ic_image_file);
@@ -328,10 +323,16 @@ public class FilesFragment extends Fragment implements AttachmentAdapter.Attachm
             textContentView.setText(item.getTextContent() != null ? item.getTextContent() : "No content available.");
         }
 
-        new AlertDialog.Builder(requireContext())
+        AlertDialog dialog = new AlertDialog.Builder(requireContext())
                 .setView(previewView)
-                .setPositiveButton("Close", null)
-                .show();
+                .create();
+
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        }
+
+        buttonClose.setOnClickListener(v -> dialog.dismiss());
+        dialog.show();
     }
 
     @Override
@@ -341,32 +342,35 @@ public class FilesFragment extends Fragment implements AttachmentAdapter.Attachm
         View confirmView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_confirm_delete_attachment, null);
         TextView targetNameView = confirmView.findViewById(R.id.textTargetAttachmentName);
         EditText editConfirm = confirmView.findViewById(R.id.editConfirmAttachmentName);
+        Button buttonCancel = confirmView.findViewById(R.id.buttonConfirmDeleteCancel);
+        Button buttonRemove = confirmView.findViewById(R.id.buttonConfirmDeleteRemove);
 
         targetNameView.setText("\"" + item.getDisplayName() + "\"");
 
         AlertDialog dialog = new AlertDialog.Builder(requireContext())
                 .setView(confirmView)
-                .setPositiveButton("Remove", null)
-                .setNegativeButton("Cancel", null)
                 .create();
 
-        dialog.setOnShowListener(d -> {
-            Button removeBtn = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-            removeBtn.setOnClickListener(v -> {
-                String typed = editConfirm.getText().toString().trim();
-                if (typed.equals(item.getDisplayName().trim())) {
-                    ProjectHostCallback host = (ProjectHostCallback) getActivity();
-                    if (host != null) {
-                        host.getProject().removeAttachmentLink(link.getId());
-                        host.onProjectUpdated();
-                        applyFilters();
-                        Toast.makeText(requireContext(), "Attachment removed", Toast.LENGTH_SHORT).show();
-                    }
-                    dialog.dismiss();
-                } else {
-                    editConfirm.setError("Name does not match exact attachment name");
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        }
+
+        buttonCancel.setOnClickListener(v -> dialog.dismiss());
+
+        buttonRemove.setOnClickListener(v -> {
+            String typed = editConfirm.getText().toString().trim();
+            if (typed.equals(item.getDisplayName().trim())) {
+                ProjectHostCallback host = (ProjectHostCallback) getActivity();
+                if (host != null) {
+                    host.getProject().removeAttachmentLink(link.getId());
+                    host.onProjectUpdated();
+                    applyFilters();
+                    Toast.makeText(requireContext(), "Attachment removed", Toast.LENGTH_SHORT).show();
                 }
-            });
+                dialog.dismiss();
+            } else {
+                editConfirm.setError("Name does not match exact attachment name");
+            }
         });
 
         dialog.show();

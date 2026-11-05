@@ -85,7 +85,13 @@ public class CatalogRepository {
     }
 
     public static List<CatalogItem> getAllItems() {
-        return Collections.unmodifiableList(CATALOG_ITEMS);
+        return Collections.unmodifiableList(new ArrayList<>(CATALOG_ITEMS));
+    }
+
+    public static void addItem(CatalogItem item) {
+        if (item != null) {
+            CATALOG_ITEMS.add(item);
+        }
     }
 
     public static CatalogItem getItemById(String catalogId) {

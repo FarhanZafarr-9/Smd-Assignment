@@ -2,5 +2,20 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="window_background">#fcfcfc</color>
+    <color name="window_background">#F5F7FA</color>
+
+    <!-- TaskFlow Design System Colors -->
+    <color name="tf_primary">#2196F3</color>
+    <color name="tf_bg_screen">#F5F7FA</color>
+    <color name="tf_text_primary">#1F2937</color>
+    <color name="tf_text_secondary">#6B7280</color>
+    <color name="tf_stroke">#E5E7EB</color>
+    <color name="tf_tag_bg">#EDE9FE</color>
+    <color name="tf_tag_text">#6D28D9</color>
+    <color name="tf_todo">#9CA3AF</color>
+    <color name="tf_inprogress">#2196F3</color>
+    <color name="tf_done">#22C55E</color>
+    <color name="tf_overdue">#DC2626</color>
+    <color name="tf_surface">#FFFFFF</color>
+    <color name="tf_divider">#F3F4F6</color>
 </resources>

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#F8F9FA"
+    android:background="@color/tf_bg_screen"
     tools:context=".HomeActivity">
 
     <!-- Top Workspace & Welcome Container -->
@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:background="#FFFFFF"
+        android:background="@color/tf_surface"
         android:paddingTop="20dp"
         android:paddingBottom="16dp"
         android:paddingHorizontal="20dp"
@@ -25,14 +25,14 @@
             android:text="@string/user_salutation"
             android:textSize="22sp"
             android:textStyle="bold"
-            android:textColor="#121212" />
+            android:textColor="@color/tf_text_primary" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/main_sub"
             android:textSize="14sp"
-            android:textColor="#666666"
+            android:textColor="@color/tf_text_secondary"
             android:layout_marginTop="2dp" />
 
         <!-- Workspace Card -->
@@ -40,11 +40,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:background="#F4F5F7"
+            android:background="@color/tf_bg_screen"
             android:layout_marginTop="16dp"
             android:padding="16dp"
-            android:gravity="center_vertical"
-            android:backgroundTint="#F0F2F5">
+            android:gravity="center_vertical">
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -57,7 +56,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/workspace_title"
                     android:textSize="12sp"
-                    android:textColor="#888888"
+                    android:textColor="@color/tf_text_secondary"
                     android:textAllCaps="true"
                     android:letterSpacing="0.08" />
 
@@ -67,7 +66,7 @@
                     android:text="@string/workspace_name"
                     android:textSize="22sp"
                     android:textStyle="bold"
-                    android:textColor="#121212"
+                    android:textColor="@color/tf_text_primary"
                     android:layout_marginTop="2dp" />
 
                 <LinearLayout
@@ -81,7 +80,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/workspace_sub"
                         android:textSize="13sp"
-                        android:textColor="#777777" />
+                        android:textColor="@color/tf_text_secondary" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -89,7 +88,7 @@
                         android:text="@string/workspace_creation_date"
                         android:textSize="13sp"
                         android:textStyle="bold"
-                        android:textColor="#333333" />
+                        android:textColor="@color/tf_text_primary" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -107,8 +106,8 @@
             android:layout_height="48dp"
             android:layout_marginTop="16dp"
             android:text="+ New Project"
-            android:backgroundTint="#121212"
-            android:textColor="#FFFFFF"
+            android:backgroundTint="@color/tf_primary"
+            android:textColor="@color/white"
             android:textSize="15sp"
             android:textStyle="bold"
             android:textAllCaps="false" />
@@ -138,8 +137,8 @@
                 android:background="@null"
                 android:hint="Search by project name or tag..."
                 android:textSize="14sp"
-                android:textColor="#121212"
-                android:textColorHint="#999999"
+                android:textColor="@color/tf_text_primary"
+                android:textColorHint="@color/tf_text_secondary"
                 android:paddingStart="10dp"
                 android:paddingEnd="10dp"
                 android:singleLine="true"
@@ -173,7 +172,7 @@
             android:layout_weight="1"
             android:text="@string/upcoming_projects"
             android:textSize="12sp"
-            android:textColor="#777777"
+            android:textColor="@color/tf_text_secondary"
             android:textStyle="bold"
             android:textAllCaps="true"
             android:letterSpacing="0.12" />
@@ -184,7 +183,7 @@
             android:layout_height="wrap_content"
             android:text="1 Project"
             android:textSize="12sp"
-            android:textColor="#888888" />
+            android:textColor="@color/tf_text_secondary" />
     </LinearLayout>
 
     <!-- Built-in ListView (must not sit inside a vertical ScrollView) -->
@@ -214,7 +213,7 @@
             android:gravity="center"
             android:padding="32dp"
             android:text="@string/no_projects"
-            android:textColor="#8D6E63"
+            android:textColor="@color/tf_text_secondary"
             android:textSize="14sp"
             android:visibility="gone" />
 

@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#F8F9FA"
+    android:background="@color/tf_bg_screen"
     tools:context=".ProjectActivity">
 
     <!-- Top Header Bar -->
@@ -14,7 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:background="#FFFFFF"
+        android:background="@color/tf_surface"
         android:paddingTop="16dp"
         android:paddingBottom="4dp"
         android:paddingHorizontal="16dp"
@@ -40,11 +40,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
-                android:background="@drawable/bg_rounded_pill"
+                android:background="@drawable/bg_tag"
                 android:paddingHorizontal="12dp"
                 android:paddingVertical="4dp"
                 android:text="TAG"
-                android:textColor="#5E35B1"
+                android:textColor="@color/tf_tag_text"
                 android:textSize="11sp"
                 android:textStyle="bold"
                 android:letterSpacing="0.05" />
@@ -55,31 +55,48 @@
                 android:layout_weight="1" />
 
             <!-- UI-only Avatars & Invite -->
-            <LinearLayout
+            <FrameLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical">
+                android:layout_marginEnd="4dp">
 
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/ic_avatar"
-                    android:contentDescription="Team Member" />
-
+                <!-- Avatar 1 -->
                 <TextView
-                    android:id="@+id/buttonInvite"
-                    android:layout_width="wrap_content"
+                    android:layout_width="28dp"
                     android:layout_height="28dp"
-                    android:layout_marginStart="8dp"
-                    android:background="@drawable/bg_rounded_button"
+                    android:background="@drawable/bg_avatar"
                     android:gravity="center"
-                    android:paddingHorizontal="10dp"
-                    android:text="+ Invite"
-                    android:textColor="#FFFFFF"
+                    android:text="F"
+                    android:textColor="@color/tf_primary"
                     android:textSize="11sp"
-                    android:textStyle="bold" />
-            </LinearLayout>
+                    android:textStyle="bold"
+                    android:layout_marginEnd="10dp" />
+
+                <!-- Avatar 2 overlapping -->
+                <TextView
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:background="@drawable/bg_avatar"
+                    android:gravity="center"
+                    android:text="Z"
+                    android:textColor="@color/tf_primary"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    android:layout_marginStart="10dp" />
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/buttonInvite"
+                android:layout_width="wrap_content"
+                android:layout_height="28dp"
+                android:layout_marginStart="8dp"
+                android:background="@drawable/bg_button_primary"
+                android:gravity="center"
+                android:paddingHorizontal="10dp"
+                android:text="+ Invite"
+                android:textColor="@color/white"
+                android:textSize="11sp"
+                android:textStyle="bold" />
 
         </LinearLayout>
 
@@ -91,7 +108,7 @@
             android:layout_marginTop="12dp"
             android:layout_marginBottom="8dp"
             android:text="Project Title"
-            android:textColor="#121212"
+            android:textColor="@color/tf_text_primary"
             android:textSize="20sp"
             android:textStyle="bold"
             android:singleLine="true"
@@ -104,12 +121,12 @@
             android:layout_height="wrap_content"
             app:tabMode="scrollable"
             app:tabGravity="start"
-            app:tabIndicatorColor="#5E35B1"
+            app:tabIndicatorColor="@color/tf_primary"
             app:tabIndicatorHeight="3dp"
-            app:tabSelectedTextColor="#5E35B1"
-            app:tabTextColor="#666666"
+            app:tabSelectedTextColor="@color/tf_primary"
+            app:tabTextColor="@color/tf_text_secondary"
             app:tabTextAppearance="@android:style/TextAppearance.Small"
-            android:background="#FFFFFF" />
+            android:background="@color/tf_surface" />
 
     </LinearLayout>
 

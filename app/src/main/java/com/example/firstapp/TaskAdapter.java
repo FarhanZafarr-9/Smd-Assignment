@@ -88,10 +88,10 @@ public class TaskAdapter extends BaseAdapter {
             // Strikethrough for Done while keeping it clearly readable
             if (isDone) {
                 holder.description.setPaintFlags(holder.description.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-                holder.description.setTextColor(Color.parseColor("#777777"));
+                holder.description.setTextColor(Color.parseColor("#6B7280"));
             } else {
                 holder.description.setPaintFlags(holder.description.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
-                holder.description.setTextColor(Color.parseColor("#1A1A1A"));
+                holder.description.setTextColor(Color.parseColor("#1F2937"));
             }
 
             holder.checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {

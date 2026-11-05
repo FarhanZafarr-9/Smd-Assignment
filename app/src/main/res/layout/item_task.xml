@@ -29,10 +29,13 @@
             android:layout_marginEnd="8dp"
             android:maxLines="2"
             android:ellipsize="end"
+            android:includeFontPadding="true"
+            android:lineSpacingMultiplier="1.15"
+            android:paddingTop="2dp"
+            android:paddingBottom="6dp"
             android:text="Task description details that can span up to two lines."
             android:textColor="@color/tf_text_primary"
-            android:textSize="14sp"
-            android:lineSpacingExtra="2dp" />
+            android:textSize="14sp" />
 
         <!-- Edit & Delete Buttons -->
         <ImageView
@@ -63,7 +66,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="8dp"
         android:layout_marginStart="36dp"
         android:gravity="center_vertical">
 

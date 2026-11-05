@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="20dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Edit Project"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="#1A1A1A"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Project Name -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Project Name *"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        android:textColor="#555555" />
+
+    <EditText
+        android:id="@+id/editEditProjectName"
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="12dp"
+        android:background="@drawable/bg_input_field"
+        android:hint="Enter name (1–60 chars)"
+        android:maxLength="60"
+        android:paddingHorizontal="12dp"
+        android:singleLine="true"
+        android:textSize="14sp" />
+
+    <!-- Project Tag -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Project Tag *"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        android:textColor="#555555" />
+
+    <EditText
+        android:id="@+id/editEditProjectTag"
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="12dp"
+        android:background="@drawable/bg_input_field"
+        android:hint="Enter tag (1–20 chars)"
+        android:maxLength="20"
+        android:paddingHorizontal="12dp"
+        android:singleLine="true"
+        android:textSize="14sp" />
+
+    <!-- Project Description -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Description *"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        android:textColor="#555555" />
+
+    <EditText
+        android:id="@+id/editEditProjectDescription"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="12dp"
+        android:background="@drawable/bg_input_field"
+        android:gravity="top|start"
+        android:hint="Enter description (1–500 chars)"
+        android:maxLength="500"
+        android:padding="12dp"
+        android:textSize="14sp" />
+
+</LinearLayout>

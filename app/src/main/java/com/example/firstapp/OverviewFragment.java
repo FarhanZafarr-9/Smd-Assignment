@@ -184,6 +184,8 @@ public class OverviewFragment extends Fragment {
         EditText editName = dialogView.findViewById(R.id.editEditProjectName);
         EditText editTag = dialogView.findViewById(R.id.editEditProjectTag);
         EditText editDesc = dialogView.findViewById(R.id.editEditProjectDescription);
+        Button buttonCancel = dialogView.findViewById(R.id.buttonEditProjectCancel);
+        Button buttonSave = dialogView.findViewById(R.id.buttonEditProjectSave);
 
         editName.setText(project.getName());
         editTag.setText(project.getTag());
@@ -191,41 +193,42 @@ public class OverviewFragment extends Fragment {
 
         AlertDialog dialog = new AlertDialog.Builder(requireContext())
                 .setView(dialogView)
-                .setPositiveButton("Save", null)
-                .setNegativeButton("Cancel", (d, which) -> d.dismiss())
                 .create();
 
-        dialog.setOnShowListener(d -> {
-            Button saveBtn = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-            saveBtn.setOnClickListener(v -> {
-                String name = editName.getText().toString().trim();
-                String tag = editTag.getText().toString().trim();
-                String desc = editDesc.getText().toString().trim();
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        }
 
-                boolean valid = true;
-                if (name.isEmpty() || name.length() > 60) {
-                    editName.setError("Name required (1–60 chars)");
-                    valid = false;
-                }
-                if (tag.isEmpty() || tag.length() > 20) {
-                    editTag.setError("Tag required (1–20 chars)");
-                    valid = false;
-                }
-                if (desc.isEmpty() || desc.length() > 500) {
-                    editDesc.setError("Description required (1–500 chars)");
-                    valid = false;
-                }
-                if (!valid) return;
+        buttonCancel.setOnClickListener(v -> dialog.dismiss());
 
-                project.setName(name);
-                project.setTag(tag);
-                project.setDescription(desc);
+        buttonSave.setOnClickListener(v -> {
+            String name = editName.getText().toString().trim();
+            String tag = editTag.getText().toString().trim();
+            String desc = editDesc.getText().toString().trim();
 
-                host.onProjectUpdated();
-                refreshViews();
-                dialog.dismiss();
-                Toast.makeText(requireContext(), "Project updated", Toast.LENGTH_SHORT).show();
-            });
+            boolean valid = true;
+            if (name.isEmpty() || name.length() > 60) {
+                editName.setError("Name required (1–60 chars)");
+                valid = false;
+            }
+            if (tag.isEmpty() || tag.length() > 20) {
+                editTag.setError("Tag required (1–20 chars)");
+                valid = false;
+            }
+            if (desc.isEmpty() || desc.length() > 500) {
+                editDesc.setError("Description required (1–500 chars)");
+                valid = false;
+            }
+            if (!valid) return;
+
+            project.setName(name);
+            project.setTag(tag);
+            project.setDescription(desc);
+
+            host.onProjectUpdated();
+            refreshViews();
+            dialog.dismiss();
+            Toast.makeText(requireContext(), "Project updated", Toast.LENGTH_SHORT).show();
         });
 
         dialog.show();

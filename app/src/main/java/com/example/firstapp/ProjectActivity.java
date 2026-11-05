@@ -93,6 +93,20 @@ public class ProjectActivity extends AppCompatActivity implements ProjectHostCal
             }
         });
         tabMediator.attach();
+
+        viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                super.onPageSelected(position);
+                if (position == 0 && pagerAdapter.getOverviewFragment() != null) {
+                    pagerAdapter.getOverviewFragment().refreshViews();
+                } else if (position == 1 && pagerAdapter.getTasksFragment() != null) {
+                    pagerAdapter.getTasksFragment().applyFiltersAndSort();
+                } else if (position == 2 && pagerAdapter.getFilesFragment() != null) {
+                    pagerAdapter.getFilesFragment().applyFilters();
+                }
+            }
+        });
     }
 
     public void updateTabTitles() {
@@ -139,6 +153,17 @@ public class ProjectActivity extends AppCompatActivity implements ProjectHostCal
     @Override
     public void onProjectUpdated() {
         updateTabTitles();
+        if (pagerAdapter != null) {
+            if (pagerAdapter.getOverviewFragment() != null) {
+                pagerAdapter.getOverviewFragment().refreshViews();
+            }
+            if (pagerAdapter.getTasksFragment() != null) {
+                pagerAdapter.getTasksFragment().applyFiltersAndSort();
+            }
+            if (pagerAdapter.getFilesFragment() != null) {
+                pagerAdapter.getFilesFragment().applyFilters();
+            }
+        }
     }
 
     @Override

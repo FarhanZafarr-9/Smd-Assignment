@@ -220,7 +220,7 @@ public class FilesFragment extends Fragment implements AttachmentAdapter.Attachm
             if (currentChip == ChipSelection.IMAGES && item.getType() != AttachmentType.IMAGE) {
                 continue;
             }
-            if (currentChip == ChipSelection.TEXT && item.getType() != AttachmentType.TEXT) {
+            if (currentChip == ChipSelection.TEXT && item.getType() == AttachmentType.IMAGE) {
                 continue;
             }
 
@@ -290,49 +290,9 @@ public class FilesFragment extends Fragment implements AttachmentAdapter.Attachm
     // AttachmentAdapter.AttachmentActionListener
     @Override
     public void onPreview(CatalogItem item) {
-        if (item == null) return;
-
-        View previewView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_attachment_preview, null);
-        TextView titleView = previewView.findViewById(R.id.textPreviewTitle);
-        TextView typeView = previewView.findViewById(R.id.textPreviewType);
-        ImageView imageView = previewView.findViewById(R.id.imagePreviewContent);
-        View scrollView = previewView.findViewById(R.id.scrollTextPreview);
-        TextView textContentView = previewView.findViewById(R.id.textPreviewContent);
-        Button buttonClose = previewView.findViewById(R.id.buttonPreviewClose);
-
-        titleView.setText(item.getDisplayName());
-        typeView.setText(item.getType().getDisplayName());
-
-        if (item.getType() == AttachmentType.IMAGE) {
-            imageView.setVisibility(View.VISIBLE);
-            scrollView.setVisibility(View.GONE);
-            if (item.getFileUri() != null) {
-                try {
-                    imageView.setImageURI(Uri.parse(item.getFileUri()));
-                } catch (Exception e) {
-                    imageView.setImageResource(R.drawable.ic_image_file);
-                }
-            } else if (item.getDrawableResId() != 0) {
-                imageView.setImageResource(item.getDrawableResId());
-            } else {
-                imageView.setImageResource(R.drawable.ic_image_file);
-            }
-        } else {
-            imageView.setVisibility(View.GONE);
-            scrollView.setVisibility(View.VISIBLE);
-            textContentView.setText(item.getTextContent() != null ? item.getTextContent() : "No content available.");
-        }
-
-        AlertDialog dialog = new AlertDialog.Builder(requireContext())
-                .setView(previewView)
-                .create();
-
-        if (dialog.getWindow() != null) {
-            dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-        }
-
-        buttonClose.setOnClickListener(v -> dialog.dismiss());
-        dialog.show();
+        if (item == null || !isAdded()) return;
+        // Open file using the phone's suitable app
+        AttachmentPickerHelper.openFileWithSuitableApp(requireContext(), item);
     }
 
     @Override

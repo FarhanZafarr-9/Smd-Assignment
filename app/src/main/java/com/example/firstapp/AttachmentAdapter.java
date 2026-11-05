@@ -76,7 +76,9 @@ public class AttachmentAdapter extends BaseAdapter {
                 holder.name.setText(item.getDisplayName());
                 holder.type.setText(item.getType().getDisplayName());
 
-                if (item.getType() == AttachmentType.IMAGE) {
+                if (item.getType() == AttachmentType.PDF) {
+                    holder.thumbnail.setImageResource(R.drawable.ic_pdf_file);
+                } else if (item.getType() == AttachmentType.IMAGE) {
                     if (item.getDrawableResId() != 0) {
                         holder.thumbnail.setImageResource(item.getDrawableResId());
                     } else {

@@ -11,6 +11,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -29,7 +30,7 @@ public class ProjectAdapter extends BaseAdapter implements Filterable {
 
     public ProjectAdapter(Context context, List<Project> projects, OnProjectClickListener clickListener) {
         this.context = context;
-        this.originalProjects = projects != null ? projects : new ArrayList<>();
+        this.originalProjects = new ArrayList<>(projects != null ? projects : Collections.emptyList());
         this.filteredProjects = new ArrayList<>(this.originalProjects);
         this.inflater = LayoutInflater.from(context);
         this.clickListener = clickListener;

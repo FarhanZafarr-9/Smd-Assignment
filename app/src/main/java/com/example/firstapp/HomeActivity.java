@@ -10,7 +10,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,16 +21,19 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class HomeActivity extends AppCompatActivity {
 
     private final List<Project> projectsList = new ArrayList<>();
     private ProjectAdapter adapter;
 
-    private ListView listViewProjects;
+    private RecyclerView recyclerViewProjects;
     private TextView emptyProjectsView;
     private TextView textProjectsCount;
     private EditText editSearchProjects;
@@ -96,7 +98,7 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void bindViews() {
-        listViewProjects = findViewById(R.id.listViewProjects);
+        recyclerViewProjects = findViewById(R.id.recyclerViewProjects);
         emptyProjectsView = findViewById(R.id.emptyProjectsView);
         textProjectsCount = findViewById(R.id.textProjectsCount);
         editSearchProjects = findViewById(R.id.editSearchProjects);
@@ -104,15 +106,15 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void setupListAndSearch() {
-        adapter = new ProjectAdapter(this, projectsList, project -> {
+        recyclerViewProjects.setLayoutManager(new LinearLayoutManager(this));
+        adapter = new ProjectAdapter(project -> {
             Intent intent = new Intent(HomeActivity.this, ProjectActivity.class);
             intent.putExtra("project", project);
             projectLauncher.launch(intent);
         });
+        recyclerViewProjects.setAdapter(adapter);
 
-        listViewProjects.setAdapter(adapter);
-        listViewProjects.setEmptyView(emptyProjectsView);
-        updateProjectsCount();
+        filterAndSubmitProjects();
 
         editSearchProjects.addTextChangedListener(new TextWatcher() {
             @Override
@@ -120,8 +122,8 @@ public class HomeActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                adapter.getFilter().filter(s);
                 buttonClearSearch.setVisibility(s.length() > 0 ? View.VISIBLE : View.GONE);
+                filterAndSubmitProjects();
             }
 
             @Override
@@ -129,6 +131,39 @@ public class HomeActivity extends AppCompatActivity {
         });
 
         buttonClearSearch.setOnClickListener(v -> editSearchProjects.setText(""));
+    }
+
+    private void filterAndSubmitProjects() {
+        String query = editSearchProjects != null && editSearchProjects.getText() != null
+                ? editSearchProjects.getText().toString().trim().toLowerCase(Locale.getDefault())
+                : "";
+
+        List<Project> displayList = new ArrayList<>();
+        if (query.isEmpty()) {
+            for (Project p : projectsList) {
+                displayList.add(new Project(p));
+            }
+        } else {
+            for (Project p : projectsList) {
+                boolean matchName = p.getName() != null && p.getName().toLowerCase(Locale.getDefault()).contains(query);
+                boolean matchTag = p.getTag() != null && p.getTag().toLowerCase(Locale.getDefault()).contains(query);
+                boolean matchDesc = p.getDescription() != null && p.getDescription().toLowerCase(Locale.getDefault()).contains(query);
+                if (matchName || matchTag || matchDesc) {
+                    displayList.add(new Project(p));
+                }
+            }
+        }
+
+        adapter.submitList(displayList);
+
+        if (displayList.isEmpty()) {
+            emptyProjectsView.setVisibility(View.VISIBLE);
+            recyclerViewProjects.setVisibility(View.GONE);
+        } else {
+            emptyProjectsView.setVisibility(View.GONE);
+            recyclerViewProjects.setVisibility(View.VISIBLE);
+        }
+        updateProjectsCount();
     }
 
     private void setupNewProjectButton() {
@@ -218,8 +253,7 @@ public class HomeActivity extends AppCompatActivity {
             }
 
             projectsList.add(newProject);
-            adapter.updateData(projectsList);
-            updateProjectsCount();
+            filterAndSubmitProjects();
             dialog.dismiss();
             Toast.makeText(this, "Project created successfully", Toast.LENGTH_SHORT).show();
         });
@@ -232,16 +266,15 @@ public class HomeActivity extends AppCompatActivity {
         boolean found = false;
         for (int i = 0; i < projectsList.size(); i++) {
             if (projectsList.get(i).getId().equals(updatedProject.getId())) {
-                projectsList.set(i, updatedProject);
+                projectsList.set(i, new Project(updatedProject));
                 found = true;
                 break;
             }
         }
         if (!found) {
-            projectsList.add(updatedProject);
+            projectsList.add(new Project(updatedProject));
         }
-        adapter.updateData(projectsList);
-        updateProjectsCount();
+        filterAndSubmitProjects();
     }
 
     private void updateProjectsCount() {

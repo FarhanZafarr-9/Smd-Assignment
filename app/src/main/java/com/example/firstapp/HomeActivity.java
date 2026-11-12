@@ -158,12 +158,17 @@ public class HomeActivity extends AppCompatActivity {
 
         if (displayList.isEmpty()) {
             emptyProjectsView.setVisibility(View.VISIBLE);
+            if (!query.isEmpty()) {
+                emptyProjectsView.setText("No matching projects found for \"" + query + "\"");
+            } else {
+                emptyProjectsView.setText(R.string.no_projects);
+            }
             recyclerViewProjects.setVisibility(View.GONE);
         } else {
             emptyProjectsView.setVisibility(View.GONE);
             recyclerViewProjects.setVisibility(View.VISIBLE);
         }
-        updateProjectsCount();
+        updateProjectsCount(displayList.size(), !query.isEmpty());
     }
 
     private void setupNewProjectButton() {
@@ -277,8 +282,12 @@ public class HomeActivity extends AppCompatActivity {
         filterAndSubmitProjects();
     }
 
-    private void updateProjectsCount() {
-        int count = projectsList.size();
-        textProjectsCount.setText(count + (count == 1 ? " Project" : " Projects"));
+    private void updateProjectsCount(int visibleCount, boolean isFiltered) {
+        int total = projectsList.size();
+        if (isFiltered) {
+            textProjectsCount.setText("Showing " + visibleCount + " of " + total + (total == 1 ? " Project" : " Projects"));
+        } else {
+            textProjectsCount.setText(total + (total == 1 ? " Project" : " Projects"));
+        }
     }
 }

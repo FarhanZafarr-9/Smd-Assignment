@@ -1,163 +1,108 @@
 package com.example.firstapp;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.Filter;
-import android.widget.Filterable;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.ListAdapter;
+import androidx.recyclerview.widget.RecyclerView;
 
-public class ProjectAdapter extends BaseAdapter implements Filterable {
+import java.util.Locale;
+import java.util.Objects;
+
+public class ProjectAdapter extends ListAdapter<Project, ProjectAdapter.ProjectViewHolder> {
 
     public interface OnProjectClickListener {
         void onProjectClick(Project project);
     }
 
-    private final Context context;
-    private final List<Project> originalProjects;
-    private final List<Project> filteredProjects;
-    private final LayoutInflater inflater;
-    private final OnProjectClickListener clickListener;
-    private ProjectFilter filter;
+    private static final DiffUtil.ItemCallback<Project> DIFF_CALLBACK = new DiffUtil.ItemCallback<Project>() {
+        @Override
+        public boolean areItemsTheSame(@NonNull Project oldItem, @NonNull Project newItem) {
+            return oldItem.getId() != null && oldItem.getId().equals(newItem.getId());
+        }
 
-    public ProjectAdapter(Context context, List<Project> projects, OnProjectClickListener clickListener) {
-        this.context = context;
-        this.originalProjects = new ArrayList<>(projects != null ? projects : Collections.emptyList());
-        this.filteredProjects = new ArrayList<>(this.originalProjects);
-        this.inflater = LayoutInflater.from(context);
+        @Override
+        public boolean areContentsTheSame(@NonNull Project oldItem, @NonNull Project newItem) {
+            return Objects.equals(oldItem.getName(), newItem.getName())
+                    && Objects.equals(oldItem.getTag(), newItem.getTag())
+                    && Objects.equals(oldItem.getDescription(), newItem.getDescription())
+                    && oldItem.getCompletedTasks() == newItem.getCompletedTasks()
+                    && oldItem.getTotalTasks() == newItem.getTotalTasks()
+                    && oldItem.getProgressPercentage() == newItem.getProgressPercentage()
+                    && oldItem.getAttachmentCount() == newItem.getAttachmentCount()
+                    && oldItem.getCommentCount() == newItem.getCommentCount();
+        }
+    };
+
+    private final OnProjectClickListener clickListener;
+
+    public ProjectAdapter(OnProjectClickListener clickListener) {
+        super(DIFF_CALLBACK);
         this.clickListener = clickListener;
     }
 
+    @NonNull
     @Override
-    public int getCount() {
-        return filteredProjects.size();
+    public ProjectViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_project, parent, false);
+        return new ProjectViewHolder(view);
     }
 
     @Override
-    public Project getItem(int position) {
-        return filteredProjects.get(position);
-    }
-
-    @Override
-    public long getItemId(int position) {
-        return position;
-    }
-
-    public void updateData(List<Project> newProjects) {
-        this.originalProjects.clear();
-        if (newProjects != null) {
-            this.originalProjects.addAll(newProjects);
-        }
-        this.filteredProjects.clear();
-        this.filteredProjects.addAll(this.originalProjects);
-        notifyDataSetChanged();
-    }
-
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        ViewHolder holder;
-        if (convertView == null) {
-            convertView = inflater.inflate(R.layout.item_project, parent, false);
-            holder = new ViewHolder();
-            holder.tag = convertView.findViewById(R.id.projectTag);
-            holder.name = convertView.findViewById(R.id.projectName);
-            holder.description = convertView.findViewById(R.id.projectDescription);
-            holder.taskFraction = convertView.findViewById(R.id.projectTaskFraction);
-            holder.percentage = convertView.findViewById(R.id.projectProgressPercentage);
-            holder.progressBar = convertView.findViewById(R.id.projectProgressBar);
-            holder.attachmentCount = convertView.findViewById(R.id.projectAttachmentCount);
-            holder.commentCount = convertView.findViewById(R.id.projectCommentCount);
-            convertView.setTag(holder);
-        } else {
-            holder = (ViewHolder) convertView.getTag();
-        }
-
+    public void onBindViewHolder(@NonNull ProjectViewHolder holder, int position) {
         Project project = getItem(position);
-        if (project != null) {
-            holder.tag.setText(project.getTag() != null ? project.getTag().toUpperCase(Locale.getDefault()) : "");
-            holder.name.setText(project.getName());
-            holder.description.setText(project.getDescription());
+        holder.bind(project, clickListener);
+    }
+
+    static class ProjectViewHolder extends RecyclerView.ViewHolder {
+        private final TextView tag;
+        private final TextView name;
+        private final TextView description;
+        private final TextView taskFraction;
+        private final TextView percentage;
+        private final ProgressBar progressBar;
+        private final TextView attachmentCount;
+        private final TextView commentCount;
+
+        ProjectViewHolder(@NonNull View itemView) {
+            super(itemView);
+            tag = itemView.findViewById(R.id.projectTag);
+            name = itemView.findViewById(R.id.projectName);
+            description = itemView.findViewById(R.id.projectDescription);
+            taskFraction = itemView.findViewById(R.id.projectTaskFraction);
+            percentage = itemView.findViewById(R.id.projectProgressPercentage);
+            progressBar = itemView.findViewById(R.id.projectProgressBar);
+            attachmentCount = itemView.findViewById(R.id.projectAttachmentCount);
+            commentCount = itemView.findViewById(R.id.projectCommentCount);
+        }
+
+        void bind(Project project, OnProjectClickListener clickListener) {
+            if (project == null) return;
+            tag.setText(project.getTag() != null ? project.getTag().toUpperCase(Locale.getDefault()) : "");
+            name.setText(project.getName());
+            description.setText(project.getDescription());
 
             int completed = project.getCompletedTasks();
             int total = project.getTotalTasks();
             int progress = project.getProgressPercentage();
 
-            holder.taskFraction.setText(completed + "/" + total + " tasks");
-            holder.percentage.setText(progress + "%");
-            holder.progressBar.setProgress(progress);
+            taskFraction.setText(completed + "/" + total + " tasks");
+            percentage.setText(progress + "%");
+            progressBar.setProgress(progress);
 
-            holder.attachmentCount.setText(String.valueOf(project.getAttachmentCount()));
-            holder.commentCount.setText(String.valueOf(project.getCommentCount()));
+            attachmentCount.setText(String.valueOf(project.getAttachmentCount()));
+            commentCount.setText(String.valueOf(project.getCommentCount()));
 
-            convertView.setOnClickListener(v -> {
+            itemView.setOnClickListener(v -> {
                 if (clickListener != null) {
                     clickListener.onProjectClick(project);
                 }
             });
-        }
-
-        return convertView;
-    }
-
-    @Override
-    public Filter getFilter() {
-        if (filter == null) {
-            filter = new ProjectFilter();
-        }
-        return filter;
-    }
-
-    private static class ViewHolder {
-        TextView tag;
-        TextView name;
-        TextView description;
-        TextView taskFraction;
-        TextView percentage;
-        ProgressBar progressBar;
-        TextView attachmentCount;
-        TextView commentCount;
-    }
-
-    private class ProjectFilter extends Filter {
-        @Override
-        protected FilterResults performFiltering(CharSequence constraint) {
-            FilterResults results = new FilterResults();
-            List<Project> filteredList = new ArrayList<>();
-
-            if (constraint == null || constraint.toString().trim().isEmpty()) {
-                filteredList.addAll(originalProjects);
-            } else {
-                String filterPattern = constraint.toString().toLowerCase(Locale.getDefault()).trim();
-                for (Project p : originalProjects) {
-                    boolean matchName = p.getName() != null && p.getName().toLowerCase(Locale.getDefault()).contains(filterPattern);
-                    boolean matchTag = p.getTag() != null && p.getTag().toLowerCase(Locale.getDefault()).contains(filterPattern);
-                    if (matchName || matchTag) {
-                        filteredList.add(p);
-                    }
-                }
-            }
-
-            results.values = filteredList;
-            results.count = filteredList.size();
-            return results;
-        }
-
-        @Override
-        @SuppressWarnings("unchecked")
-        protected void publishResults(CharSequence constraint, FilterResults results) {
-            filteredProjects.clear();
-            if (results.values != null) {
-                filteredProjects.addAll((List<Project>) results.values);
-            }
-            notifyDataSetChanged();
         }
     }
 }

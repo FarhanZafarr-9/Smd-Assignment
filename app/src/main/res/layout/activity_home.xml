@@ -192,16 +192,14 @@
         android:layout_height="0dp"
         android:layout_weight="1">
 
-        <ListView
-            android:id="@+id/listViewProjects"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewProjects"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:paddingHorizontal="20dp"
             android:paddingTop="8dp"
             android:paddingBottom="24dp"
             android:clipToPadding="false"
-            android:divider="@null"
-            android:dividerHeight="0dp"
             android:scrollbars="vertical" />
 
         <!-- Empty State -->

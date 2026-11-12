@@ -48,6 +48,31 @@ public class Project implements Serializable {
         this.commentCount = commentCount;
     }
 
+    public Project(Project other) {
+        if (other == null) return;
+        this.id = other.id;
+        this.tag = other.tag;
+        this.name = other.name;
+        this.description = other.description;
+        this.tasks = new ArrayList<>();
+        if (other.tasks != null) {
+            for (Task t : other.tasks) {
+                this.tasks.add(new Task(t.getId(), t.getDescription(), t.getStatus(), t.getPriority(), t.getDueDate(), t.getCreatedAt()));
+            }
+        }
+        this.attachmentLinks = new ArrayList<>();
+        if (other.attachmentLinks != null) {
+            for (AttachmentLink l : other.attachmentLinks) {
+                this.attachmentLinks.add(new AttachmentLink(l.getId(), l.getCatalogId(), l.getResourceRef()));
+            }
+        }
+        this.commentCount = other.commentCount;
+    }
+
+    public Project copy() {
+        return new Project(this);
+    }
+
     // Getters and Setters
     public String getId() {
         return id;

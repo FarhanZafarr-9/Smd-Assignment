@@ -1,6 +1,10 @@
 package com.example.firstapp;
 
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.RectF;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
@@ -19,6 +23,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -134,6 +139,30 @@ public class FilesFragment extends Fragment implements AttachmentAdapter.Attachm
                     CatalogItem item = CatalogRepository.getItemById(link.getCatalogId());
                     confirmDeleteAttachment(link, item, position);
                 }
+            }
+
+            @Override
+            public void onChildDraw(@NonNull Canvas c, @NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+                if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE && dX > 0) {
+                    View itemView = viewHolder.itemView;
+                    Paint paint = new Paint();
+                    paint.setColor(Color.parseColor("#EF4444"));
+                    RectF background = new RectF((float) itemView.getLeft(), (float) itemView.getTop(), dX, (float) itemView.getBottom());
+                    c.drawRoundRect(background, 16f, 16f, paint);
+
+                    Drawable deleteIcon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_close);
+                    if (deleteIcon != null) {
+                        deleteIcon.setTint(Color.WHITE);
+                        int iconMargin = (itemView.getHeight() - deleteIcon.getIntrinsicHeight()) / 2;
+                        int iconTop = itemView.getTop() + iconMargin;
+                        int iconBottom = iconTop + deleteIcon.getIntrinsicHeight();
+                        int iconLeft = itemView.getLeft() + 40;
+                        int iconRight = iconLeft + deleteIcon.getIntrinsicWidth();
+                        deleteIcon.setBounds(iconLeft, iconTop, iconRight, iconBottom);
+                        deleteIcon.draw(c);
+                    }
+                }
+                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
             }
         };
 

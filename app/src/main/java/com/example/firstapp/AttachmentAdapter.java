@@ -1,48 +1,55 @@
 package com.example.firstapp;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class AttachmentAdapter extends BaseAdapter {
+public class AttachmentAdapter extends RecyclerView.Adapter<AttachmentAdapter.AttachmentViewHolder> {
 
     public interface AttachmentActionListener {
         void onPreview(CatalogItem item);
-        void onRemove(AttachmentLink link, CatalogItem item);
+        void onRemove(AttachmentLink link, CatalogItem item, int position);
     }
 
-    private final Context context;
     private final List<AttachmentLink> links;
-    private final LayoutInflater inflater;
     private final AttachmentActionListener listener;
 
-    public AttachmentAdapter(Context context, List<AttachmentLink> links, AttachmentActionListener listener) {
-        this.context = context;
+    public AttachmentAdapter(List<AttachmentLink> links, AttachmentActionListener listener) {
         this.links = links != null ? links : new ArrayList<>();
-        this.inflater = LayoutInflater.from(context);
         this.listener = listener;
     }
 
-    @Override
-    public int getCount() {
-        return links.size();
-    }
-
-    @Override
     public AttachmentLink getItem(int position) {
-        return links.get(position);
+        if (position >= 0 && position < links.size()) {
+            return links.get(position);
+        }
+        return null;
+    }
+
+    @NonNull
+    @Override
+    public AttachmentViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_attachment, parent, false);
+        return new AttachmentViewHolder(view);
     }
 
     @Override
-    public long getItemId(int position) {
-        return position;
+    public void onBindViewHolder(@NonNull AttachmentViewHolder holder, int position) {
+        AttachmentLink link = links.get(position);
+        holder.bind(link, listener);
+    }
+
+    @Override
+    public int getItemCount() {
+        return links.size();
     }
 
     public void updateLinks(List<AttachmentLink> newLinks) {
@@ -53,67 +60,57 @@ public class AttachmentAdapter extends BaseAdapter {
         notifyDataSetChanged();
     }
 
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        ViewHolder holder;
-        if (convertView == null) {
-            convertView = inflater.inflate(R.layout.item_attachment, parent, false);
-            holder = new ViewHolder();
-            holder.thumbnail = convertView.findViewById(R.id.imageAttachmentThumbnail);
-            holder.name = convertView.findViewById(R.id.textAttachmentName);
-            holder.type = convertView.findViewById(R.id.textAttachmentType);
-            holder.buttonPreview = convertView.findViewById(R.id.buttonPreviewAttachment);
-            holder.buttonRemove = convertView.findViewById(R.id.buttonRemoveAttachment);
-            convertView.setTag(holder);
-        } else {
-            holder = (ViewHolder) convertView.getTag();
+    static class AttachmentViewHolder extends RecyclerView.ViewHolder {
+        private final ImageView thumbnail;
+        private final TextView name;
+        private final TextView type;
+        private final TextView buttonPreview;
+        private final ImageView buttonRemove;
+
+        AttachmentViewHolder(@NonNull View itemView) {
+            super(itemView);
+            thumbnail = itemView.findViewById(R.id.imageAttachmentThumbnail);
+            name = itemView.findViewById(R.id.textAttachmentName);
+            type = itemView.findViewById(R.id.textAttachmentType);
+            buttonPreview = itemView.findViewById(R.id.buttonPreviewAttachment);
+            buttonRemove = itemView.findViewById(R.id.buttonRemoveAttachment);
         }
 
-        AttachmentLink link = getItem(position);
-        if (link != null) {
+        void bind(AttachmentLink link, AttachmentActionListener listener) {
+            if (link == null) return;
             CatalogItem item = CatalogRepository.getItemById(link.getCatalogId());
             if (item != null) {
-                holder.name.setText(item.getDisplayName());
-                holder.type.setText(item.getType().getDisplayName());
+                name.setText(item.getDisplayName());
+                type.setText(item.getType().getDisplayName());
 
                 if (item.getType() == AttachmentType.PDF) {
-                    holder.thumbnail.setImageResource(R.drawable.ic_pdf_file);
+                    thumbnail.setImageResource(R.drawable.ic_pdf_file);
                 } else if (item.getType() == AttachmentType.IMAGE) {
                     if (item.getDrawableResId() != 0) {
-                        holder.thumbnail.setImageResource(item.getDrawableResId());
+                        thumbnail.setImageResource(item.getDrawableResId());
                     } else {
-                        holder.thumbnail.setImageResource(R.drawable.ic_image_file);
+                        thumbnail.setImageResource(R.drawable.ic_image_file);
                     }
                 } else {
-                    holder.thumbnail.setImageResource(R.drawable.ic_text_file);
+                    thumbnail.setImageResource(R.drawable.ic_text_file);
                 }
 
-                holder.buttonPreview.setOnClickListener(v -> {
+                buttonPreview.setOnClickListener(v -> {
                     if (listener != null) listener.onPreview(item);
                 });
 
-                holder.buttonRemove.setOnClickListener(v -> {
-                    if (listener != null) listener.onRemove(link, item);
+                buttonRemove.setOnClickListener(v -> {
+                    if (listener != null) listener.onRemove(link, item, getAdapterPosition());
                 });
 
-                convertView.setOnClickListener(v -> {
+                itemView.setOnClickListener(v -> {
                     if (listener != null) listener.onPreview(item);
                 });
             } else {
-                holder.name.setText(link.getCatalogId());
-                holder.type.setText("Unknown");
-                holder.thumbnail.setImageResource(R.drawable.attachment_icon);
+                name.setText(link.getCatalogId());
+                type.setText("Unknown");
+                thumbnail.setImageResource(R.drawable.attachment_icon);
             }
         }
-
-        return convertView;
-    }
-
-    private static class ViewHolder {
-        ImageView thumbnail;
-        TextView name;
-        TextView type;
-        TextView buttonPreview;
-        ImageView buttonRemove;
     }
 }

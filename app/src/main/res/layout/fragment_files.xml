@@ -127,16 +127,14 @@
         android:layout_height="0dp"
         android:layout_weight="1">
 
-        <ListView
-            android:id="@+id/listViewAttachments"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewAttachments"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:paddingHorizontal="16dp"
             android:paddingTop="10dp"
             android:paddingBottom="72dp"
             android:clipToPadding="false"
-            android:divider="@null"
-            android:dividerHeight="0dp"
             android:scrollbars="vertical" />
 
         <!-- Empty State 1: No attachments in project -->

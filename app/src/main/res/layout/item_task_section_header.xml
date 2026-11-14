@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingTop="14dp"
+    android:paddingBottom="6dp"
+    android:paddingHorizontal="4dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <!-- Status Dot Indicator -->
+        <View
+            android:id="@+id/viewHeaderIndicator"
+            android:layout_width="9dp"
+            android:layout_height="9dp"
+            android:background="@drawable/bg_dot"
+            android:layout_marginEnd="8dp" />
+
+        <!-- Status Name -->
+        <TextView
+            android:id="@+id/textHeaderStatusName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="In Progress"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            android:textColor="@color/tf_text_primary"
+            android:letterSpacing="0.04" />
+
+        <!-- Task Count Badge -->
+        <TextView
+            android:id="@+id/textHeaderTaskCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_rounded_pill"
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="2dp"
+            android:text="3 tasks"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            android:textColor="@color/tf_text_secondary" />
+    </LinearLayout>
+
+</LinearLayout>

@@ -11,7 +11,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,14 +19,15 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
-public class TasksFragment extends Fragment implements TaskAdapter.TaskActionListener {
+public class TasksFragment extends Fragment implements GroupedTasksAdapter.TaskActionListener {
 
     private EditText editSearchTasks;
     private ImageView buttonClearTaskSearch;
@@ -38,14 +38,14 @@ public class TasksFragment extends Fragment implements TaskAdapter.TaskActionLis
     private TextView textTaskShowingCount;
     private TextView buttonResetFilters;
 
-    private ListView listViewTasks;
+    private RecyclerView recyclerViewTasks;
     private View layoutEmptyNoTasks;
     private View layoutEmptyNoMatch;
     private Button buttonEmptyAddTask;
     private Button buttonEmptyResetFilters;
     private Button buttonFloatingAddTask;
 
-    private TaskAdapter taskAdapter;
+    private GroupedTasksAdapter taskAdapter;
     private final List<Task> displayedTasks = new ArrayList<>();
 
     // Filter states
@@ -90,7 +90,7 @@ public class TasksFragment extends Fragment implements TaskAdapter.TaskActionLis
         textTaskShowingCount = v.findViewById(R.id.textTaskShowingCount);
         buttonResetFilters = v.findViewById(R.id.buttonResetFilters);
 
-        listViewTasks = v.findViewById(R.id.listViewTasks);
+        recyclerViewTasks = v.findViewById(R.id.recyclerViewTasks);
         layoutEmptyNoTasks = v.findViewById(R.id.layoutEmptyNoTasks);
         layoutEmptyNoMatch = v.findViewById(R.id.layoutEmptyNoMatch);
         buttonEmptyAddTask = v.findViewById(R.id.buttonEmptyAddTask);
@@ -132,8 +132,9 @@ public class TasksFragment extends Fragment implements TaskAdapter.TaskActionLis
     }
 
     private void setupAdapter() {
-        taskAdapter = new TaskAdapter(requireContext(), displayedTasks, this);
-        listViewTasks.setAdapter(taskAdapter);
+        recyclerViewTasks.setLayoutManager(new LinearLayoutManager(requireContext()));
+        taskAdapter = new GroupedTasksAdapter(this);
+        recyclerViewTasks.setAdapter(taskAdapter);
     }
 
     private void setupListeners() {
@@ -252,48 +253,45 @@ public class TasksFragment extends Fragment implements TaskAdapter.TaskActionLis
             displayedTasks.add(t);
         }
 
-        // Apply Sort
-        // 0: Due date ascending, 1: Due date descending, 2: Priority (high to low), 3: Created (newest)
+        // Apply Sort within each status group
         Collections.sort(displayedTasks, (t1, t2) -> {
             if (currentSortIndex == 0) {
-                // Due date ascending: tasks with dates first, nulls at end
                 if (t1.getDueDate() == null && t2.getDueDate() == null) return 0;
                 if (t1.getDueDate() == null) return 1;
                 if (t2.getDueDate() == null) return -1;
                 return t1.getDueDate().compareTo(t2.getDueDate());
             } else if (currentSortIndex == 1) {
-                // Due date descending: tasks with dates first, nulls at end
                 if (t1.getDueDate() == null && t2.getDueDate() == null) return 0;
                 if (t1.getDueDate() == null) return 1;
                 if (t2.getDueDate() == null) return -1;
                 return t2.getDueDate().compareTo(t1.getDueDate());
             } else if (currentSortIndex == 2) {
-                // Priority (High -> Normal -> Low)
                 return Integer.compare(getPriorityRank(t1.getPriority()), getPriorityRank(t2.getPriority()));
             } else {
-                // Created newest
                 return Long.compare(t2.getCreatedAt(), t1.getCreatedAt());
             }
         });
 
-        taskAdapter.notifyDataSetChanged();
+        // Group by status in fixed order: Overdue -> In progress -> To do -> Done
+        List<TaskListItem> groupedItems = TaskGrouper.groupTasks(displayedTasks);
+        taskAdapter.submitItems(groupedItems);
 
         // Update "Showing X of Y tasks"
         textTaskShowingCount.setText("Showing " + displayedTasks.size() + " of " + totalProjectTasks + " tasks");
 
         // Handle Empty States
         if (totalProjectTasks == 0) {
-            listViewTasks.setVisibility(View.GONE);
+            recyclerViewTasks.setVisibility(View.GONE);
             layoutEmptyNoTasks.setVisibility(View.VISIBLE);
             layoutEmptyNoMatch.setVisibility(View.GONE);
             buttonFloatingAddTask.setVisibility(View.GONE);
         } else if (displayedTasks.isEmpty()) {
-            listViewTasks.setVisibility(View.GONE);
+            recyclerViewTasks.setVisibility(View.GONE);
             layoutEmptyNoTasks.setVisibility(View.GONE);
             layoutEmptyNoMatch.setVisibility(View.VISIBLE);
             buttonFloatingAddTask.setVisibility(View.VISIBLE);
         } else {
-            listViewTasks.setVisibility(View.VISIBLE);
+            recyclerViewTasks.setVisibility(View.VISIBLE);
             layoutEmptyNoTasks.setVisibility(View.GONE);
             layoutEmptyNoMatch.setVisibility(View.GONE);
             buttonFloatingAddTask.setVisibility(View.VISIBLE);
@@ -320,7 +318,7 @@ public class TasksFragment extends Fragment implements TaskAdapter.TaskActionLis
         });
     }
 
-    // TaskActionListener implementations
+    // GroupedTasksAdapter.TaskActionListener implementations
     @Override
     public void onTaskCheckChanged(Task task, boolean isChecked) {
         ProjectHostCallback host = (ProjectHostCallback) getActivity();
@@ -345,20 +343,41 @@ public class TasksFragment extends Fragment implements TaskAdapter.TaskActionLis
     }
 
     @Override
-    public void onTaskDelete(Task task) {
-        ProjectHostCallback host = (ProjectHostCallback) getActivity();
-        if (host == null) return;
+    public void onTaskDelete(Task task, int position) {
+        confirmDeleteTask(task, position);
+    }
+
+    public void confirmDeleteTask(Task task, int position) {
+        if (task == null) {
+            if (position != RecyclerView.NO_POSITION) {
+                taskAdapter.notifyItemChanged(position);
+            }
+            return;
+        }
 
         new AlertDialog.Builder(requireContext())
                 .setTitle("Delete Task")
-                .setMessage("Are you sure you want to delete this task?")
+                .setMessage("Are you sure you want to delete this task?\n\n\"" + task.getDescription() + "\"")
                 .setPositiveButton("Delete", (dialog, which) -> {
-                    host.getProject().deleteTask(task.getId());
-                    host.onProjectUpdated();
-                    applyFiltersAndSort();
-                    Toast.makeText(requireContext(), "Task deleted", Toast.LENGTH_SHORT).show();
+                    ProjectHostCallback host = (ProjectHostCallback) getActivity();
+                    if (host != null && host.getProject() != null) {
+                        host.getProject().deleteTask(task.getId());
+                        host.onProjectUpdated();
+                        applyFiltersAndSort();
+                        Toast.makeText(requireContext(), "Task deleted", Toast.LENGTH_SHORT).show();
+                    }
                 })
-                .setNegativeButton("Cancel", null)
+                .setNegativeButton("Cancel", (dialog, which) -> {
+                    dialog.dismiss();
+                    if (position != RecyclerView.NO_POSITION) {
+                        taskAdapter.notifyItemChanged(position);
+                    }
+                })
+                .setOnCancelListener(dialog -> {
+                    if (position != RecyclerView.NO_POSITION) {
+                        taskAdapter.notifyItemChanged(position);
+                    }
+                })
                 .show();
     }
 

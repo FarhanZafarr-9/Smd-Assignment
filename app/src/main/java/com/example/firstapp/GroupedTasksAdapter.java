@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class GroupedTasksAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -42,6 +43,13 @@ public class GroupedTasksAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         notifyDataSetChanged();
     }
 
+    public void swapItems(int fromPosition, int toPosition) {
+        if (fromPosition >= 0 && fromPosition < items.size() && toPosition >= 0 && toPosition < items.size()) {
+            Collections.swap(items, fromPosition, toPosition);
+            notifyItemMoved(fromPosition, toPosition);
+        }
+    }
+
     @Override
     public int getItemViewType(int position) {
         return items.get(position).getViewType();
@@ -66,7 +74,8 @@ public class GroupedTasksAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         if (holder instanceof HeaderViewHolder && item instanceof TaskListItem.HeaderItem) {
             ((HeaderViewHolder) holder).bind((TaskListItem.HeaderItem) item);
         } else if (holder instanceof TaskViewHolder && item instanceof TaskListItem.TaskRowItem) {
-            ((TaskViewHolder) holder).bind(((TaskListItem.TaskRowItem) item).getTask(), listener);
+            TaskListItem.TaskRowItem rowItem = (TaskListItem.TaskRowItem) item;
+            ((TaskViewHolder) holder).bind(rowItem.getTask(), rowItem.getGroupType(), listener);
         }
     }
 
@@ -79,6 +88,7 @@ public class GroupedTasksAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         private final View viewHeaderIndicator;
         private final TextView textHeaderStatusName;
         private final TextView textHeaderTaskCount;
+        private TaskGroupType groupType;
 
         public HeaderViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -87,10 +97,14 @@ public class GroupedTasksAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             textHeaderTaskCount = itemView.findViewById(R.id.textHeaderTaskCount);
         }
 
+        public TaskGroupType getGroupType() {
+            return groupType;
+        }
+
         public void bind(TaskListItem.HeaderItem headerItem) {
-            TaskGroupType group = headerItem.getGroupType();
-            viewHeaderIndicator.setBackgroundResource(group.getDotDrawableRes());
-            textHeaderStatusName.setText(group.getTitle());
+            this.groupType = headerItem.getGroupType();
+            viewHeaderIndicator.setBackgroundResource(groupType.getDotDrawableRes());
+            textHeaderStatusName.setText(groupType.getTitle());
             int count = headerItem.getTaskCount();
             textHeaderTaskCount.setText(count + (count == 1 ? " task" : " tasks"));
         }
@@ -107,6 +121,7 @@ public class GroupedTasksAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         private final TextView overdueBadge;
 
         private Task boundTask;
+        private TaskGroupType boundGroupType;
 
         public TaskViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -124,8 +139,13 @@ public class GroupedTasksAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             return boundTask;
         }
 
-        public void bind(Task task, TaskActionListener listener) {
+        public TaskGroupType getGroupType() {
+            return boundGroupType;
+        }
+
+        public void bind(Task task, TaskGroupType groupType, TaskActionListener listener) {
             this.boundTask = task;
+            this.boundGroupType = groupType;
             if (task == null) return;
 
             description.setText(task.getDescription());

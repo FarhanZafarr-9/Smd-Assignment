@@ -3,6 +3,7 @@ package com.example.firstapp;
 import org.junit.Test;
 
 import java.util.Calendar;
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -121,5 +122,54 @@ public class ExampleUnitTest {
         p1.addAttachmentLink(new AttachmentLink("cat_1", 0));
         assertEquals(1, p1.getAttachmentCount());
         assertEquals(0, p2.getAttachmentCount());
+    }
+
+    @Test
+    public void testTaskGrouperOrderingAndOmission() {
+        Project sample = SampleDataProvider.createInitialSampleProject();
+        List<TaskListItem> grouped = TaskGrouper.groupTasks(sample.getTaskList());
+        assertFalse(grouped.isEmpty());
+
+        // Verify headers appear in order: Overdue -> In progress -> To do -> Done
+        int lastGroupOrder = -1;
+        for (TaskListItem item : grouped) {
+            if (item instanceof TaskListItem.HeaderItem) {
+                TaskListItem.HeaderItem header = (TaskListItem.HeaderItem) item;
+                int currentOrder = header.getGroupType().ordinal();
+                assertTrue("Headers must be in fixed order: Overdue, In progress, To do, Done", currentOrder > lastGroupOrder);
+                assertTrue("Header task count must be positive", header.getTaskCount() > 0);
+                lastGroupOrder = currentOrder;
+            }
+        }
+    }
+
+    @Test
+    public void testTaskGrouperEmptyGroupSuppression() {
+        List<Task> tasksOnlyDone = new java.util.ArrayList<>();
+        tasksOnlyDone.add(new Task("Done Task 1", TaskStatus.DONE, TaskPriority.NORMAL, null));
+        tasksOnlyDone.add(new Task("Done Task 2", TaskStatus.DONE, TaskPriority.HIGH, null));
+
+        List<TaskListItem> grouped = TaskGrouper.groupTasks(tasksOnlyDone);
+        // Only 1 header (Done) + 2 task items = 3 total items
+        assertEquals(3, grouped.size());
+        assertTrue(grouped.get(0) instanceof TaskListItem.HeaderItem);
+        TaskListItem.HeaderItem header = (TaskListItem.HeaderItem) grouped.get(0);
+        assertEquals(TaskGroupType.DONE, header.getGroupType());
+        assertEquals(2, header.getTaskCount());
+    }
+
+    @Test
+    public void testProjectSnapshotCopyIsolation() {
+        Project original = SampleDataProvider.createInitialSampleProject();
+        Project copy = original.copy();
+
+        assertEquals(original.getId(), copy.getId());
+        assertEquals(original.getName(), copy.getName());
+        assertEquals(original.getTotalTasks(), copy.getTotalTasks());
+
+        // Mutate copy
+        copy.addTask(new Task("Extra Task", TaskStatus.TODO, TaskPriority.HIGH, null));
+        assertEquals(original.getTotalTasks() + 1, copy.getTotalTasks());
+        assertNotEquals(original.getTotalTasks(), copy.getTotalTasks());
     }
 }

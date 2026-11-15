@@ -1,5 +1,10 @@
 package com.example.firstapp;
 
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.RectF;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -18,7 +23,9 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -71,6 +78,7 @@ public class TasksFragment extends Fragment implements GroupedTasksAdapter.TaskA
         setupSpinners();
         setupAdapter();
         setupListeners();
+        setupTaskGestures();
         return view;
     }
 
@@ -135,6 +143,193 @@ public class TasksFragment extends Fragment implements GroupedTasksAdapter.TaskA
         recyclerViewTasks.setLayoutManager(new LinearLayoutManager(requireContext()));
         taskAdapter = new GroupedTasksAdapter(this);
         recyclerViewTasks.setAdapter(taskAdapter);
+    }
+
+    private void setupTaskGestures() {
+        ItemTouchHelper.Callback callback = new ItemTouchHelper.Callback() {
+            @Override
+            public boolean isLongPressDragEnabled() {
+                return true;
+            }
+
+            @Override
+            public boolean isItemViewSwipeEnabled() {
+                return true;
+            }
+
+            @Override
+            public int getMovementFlags(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
+                // Headers cannot be dragged or swiped!
+                if (viewHolder instanceof GroupedTasksAdapter.HeaderViewHolder) {
+                    return makeMovementFlags(0, 0);
+                }
+                int dragFlags = ItemTouchHelper.UP | ItemTouchHelper.DOWN;
+                int swipeFlags = ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT;
+                return makeMovementFlags(dragFlags, swipeFlags);
+            }
+
+            @Override
+            public boolean canDropOver(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder current, @NonNull RecyclerView.ViewHolder target) {
+                // Cannot drop over section headers!
+                if (!(target instanceof GroupedTasksAdapter.TaskViewHolder)) {
+                    return false;
+                }
+                GroupedTasksAdapter.TaskViewHolder currentHolder = (GroupedTasksAdapter.TaskViewHolder) current;
+                GroupedTasksAdapter.TaskViewHolder targetHolder = (GroupedTasksAdapter.TaskViewHolder) target;
+
+                // Dragging strictly bounded within the exact same status group!
+                return currentHolder.getGroupType() == targetHolder.getGroupType();
+            }
+
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder source, @NonNull RecyclerView.ViewHolder target) {
+                if (!(source instanceof GroupedTasksAdapter.TaskViewHolder) || !(target instanceof GroupedTasksAdapter.TaskViewHolder)) {
+                    return false;
+                }
+
+                GroupedTasksAdapter.TaskViewHolder srcHolder = (GroupedTasksAdapter.TaskViewHolder) source;
+                GroupedTasksAdapter.TaskViewHolder tgtHolder = (GroupedTasksAdapter.TaskViewHolder) target;
+
+                if (srcHolder.getGroupType() != tgtHolder.getGroupType()) {
+                    return false;
+                }
+
+                int fromPosition = source.getAdapterPosition();
+                int toPosition = target.getAdapterPosition();
+
+                if (fromPosition == RecyclerView.NO_POSITION || toPosition == RecyclerView.NO_POSITION) {
+                    return false;
+                }
+
+                // Swap in adapter items
+                taskAdapter.swapItems(fromPosition, toPosition);
+
+                // Reorder in project's task list so order persists
+                ProjectHostCallback host = (ProjectHostCallback) getActivity();
+                if (host != null && host.getProject() != null) {
+                    List<Task> projectTasks = host.getProject().getTaskList();
+                    Task srcTask = srcHolder.getTask();
+                    Task tgtTask = tgtHolder.getTask();
+                    int srcIdx = projectTasks.indexOf(srcTask);
+                    int tgtIdx = projectTasks.indexOf(tgtTask);
+                    if (srcIdx != -1 && tgtIdx != -1) {
+                        Collections.swap(projectTasks, srcIdx, tgtIdx);
+                        host.onProjectUpdated();
+                    }
+                }
+
+                return true;
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                int position = viewHolder.getAdapterPosition();
+                if (position == RecyclerView.NO_POSITION || !(viewHolder instanceof GroupedTasksAdapter.TaskViewHolder)) {
+                    return;
+                }
+
+                Task task = ((GroupedTasksAdapter.TaskViewHolder) viewHolder).getTask();
+                if (task == null) {
+                    taskAdapter.notifyItemChanged(position);
+                    return;
+                }
+
+                if (direction == ItemTouchHelper.LEFT) {
+                    // Swipe Left: Complete task and move to Done group
+                    handleSwipeCompleteTask(task, position);
+                } else if (direction == ItemTouchHelper.RIGHT) {
+                    // Swipe Right: Confirm delete
+                    handleSwipeDeleteTask(task, position);
+                }
+            }
+
+            @Override
+            public void onChildDraw(@NonNull Canvas c, @NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+                if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE && viewHolder instanceof GroupedTasksAdapter.TaskViewHolder) {
+                    View itemView = viewHolder.itemView;
+                    Paint paint = new Paint();
+
+                    if (dX > 0) {
+                        // Swiping right: Delete (Red)
+                        paint.setColor(Color.parseColor("#EF4444"));
+                        RectF background = new RectF((float) itemView.getLeft(), (float) itemView.getTop(), dX, (float) itemView.getBottom());
+                        c.drawRoundRect(background, 16f, 16f, paint);
+
+                        Drawable icon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_close);
+                        if (icon != null) {
+                            icon.setTint(Color.WHITE);
+                            int iconMargin = (itemView.getHeight() - icon.getIntrinsicHeight()) / 2;
+                            int iconTop = itemView.getTop() + iconMargin;
+                            int iconBottom = iconTop + icon.getIntrinsicHeight();
+                            int iconLeft = itemView.getLeft() + 40;
+                            int iconRight = iconLeft + icon.getIntrinsicWidth();
+                            icon.setBounds(iconLeft, iconTop, iconRight, iconBottom);
+                            icon.draw(c);
+                        }
+                    } else if (dX < 0) {
+                        // Swiping left: Complete (Green)
+                        paint.setColor(Color.parseColor("#10B981"));
+                        RectF background = new RectF((float) itemView.getRight() + dX, (float) itemView.getTop(), (float) itemView.getRight(), (float) itemView.getBottom());
+                        c.drawRoundRect(background, 16f, 16f, paint);
+
+                        Drawable icon = ContextCompat.getDrawable(requireContext(), R.drawable.bg_dot_done);
+                        if (icon != null) {
+                            int iconMargin = (itemView.getHeight() - 32) / 2;
+                            int iconTop = itemView.getTop() + iconMargin;
+                            int iconBottom = iconTop + 32;
+                            int iconRight = itemView.getRight() - 40;
+                            int iconLeft = iconRight - 32;
+                            icon.setBounds(iconLeft, iconTop, iconRight, iconBottom);
+                            icon.draw(c);
+                        }
+                    }
+                }
+                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
+            }
+        };
+
+        ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
+        touchHelper.attachToRecyclerView(recyclerViewTasks);
+    }
+
+    private void handleSwipeCompleteTask(Task task, int position) {
+        if (task.getStatus() == TaskStatus.DONE) {
+            Toast.makeText(requireContext(), "Task already completed", Toast.LENGTH_SHORT).show();
+            taskAdapter.notifyItemChanged(position);
+            return;
+        }
+
+        ProjectHostCallback host = (ProjectHostCallback) getActivity();
+        if (host != null && host.getProject() != null) {
+            task.setStatus(TaskStatus.DONE);
+            host.onProjectUpdated();
+            applyFiltersAndSort();
+            Toast.makeText(requireContext(), "Task marked as completed", Toast.LENGTH_SHORT).show();
+        } else {
+            taskAdapter.notifyItemChanged(position);
+        }
+    }
+
+    private void handleSwipeDeleteTask(Task task, int position) {
+        new AlertDialog.Builder(requireContext())
+                .setTitle("Delete Task")
+                .setMessage("Are you sure you want to delete this task?\n\n\"" + task.getDescription() + "\"")
+                .setCancelable(false)
+                .setPositiveButton("Delete", (dialog, which) -> {
+                    ProjectHostCallback host = (ProjectHostCallback) getActivity();
+                    if (host != null && host.getProject() != null) {
+                        host.getProject().deleteTask(task.getId());
+                        host.onProjectUpdated();
+                        applyFiltersAndSort();
+                        Toast.makeText(requireContext(), "Task deleted", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .setNegativeButton("Cancel", (dialog, which) -> {
+                    dialog.dismiss();
+                    taskAdapter.notifyItemChanged(position);
+                })
+                .setOnCancelListener(dialog -> taskAdapter.notifyItemChanged(position))
+                .show();
     }
 
     private void setupListeners() {
